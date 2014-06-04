@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+    <meta charset="utf-8" />
+    <title>Planetary Surface Visualizer</title>
+    <style>
+        .ui {
+            border: solid;
+            position: absolute;
+            color: #99ffff;
+            z-index: 3;
+        }
+        .custom-pane {
+            display: none;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 10px;
+            background-color: silver;
+        }
+        input[type=text] {
+            background-color: silver;          
+        }
+    </style>
+    </head>
+   
+  <body onload="main()">
+      
+     
+      
+          <div class="ui">
+              
+              <button  type="button" onclick="toggleLock()">Lock Camera</button> <br>
+              <select id="planetChooser" style="display: block" onchange="planetChooser(this)">
+                    <option value="Earth">Earth</option>
+                    <option value="Uranus">Uranus</option>
+                    <option value="Custom">Custom</option>
+                </select>
+              
+              Speed: 
+              <input id="speedR" type="text" value="60" size="2"
+                   onchange="getValue('speedS', 'speedR', 1)"> seconds/day<br>
+             1 <input id="speedS" type="range" min="0" max="3.576636" value="1.288318" step="0.00001"
+                                onchange="getValue('speedS', 'speedR', 0)"> Real time <br>
+             
+              <div class="custom-pane" id="pane">
+            
+            Axial tilt: 
+            <input id="tiltR" type="text" value="23.4" size="2"
+                   onchange="getValue2('tiltS', 'tiltR', 1)"> degrees<br>
+            0<input id="tiltS" type="range" min="0" max="180" value="23.4" step="0.1"
+                    onchange="getValue2('tiltS', 'tiltR', 0)">180 <br>
+            
+            Year length: 
+            <input id="yearR" type="text" value="365" size="2"
+                   onchange="getValue2('yearS', 'yearR', 1)"> Earth days<br>
+            1<input id="yearS" type="range" min="1" max="1000" value="365" step="1"
+                    onchange="getValue2('yearS', 'yearR', 0)">1000 <br>
+            
+            
+            Planetary Radius:
+            <input id="radiusR" type="text" value="500" size="2"
+                   onchange="getValue2('radiusS', 'radiusR', 1)"> <br>
+            1<input id="radiusS" type="range" min="1" max="500" value="500" step="1"
+                    onchange="getValue2('radiusS', 'radiusR', 0)">500 <br>
+            
+              </div>          
+            <div>
+                <p  id="p1"> 
+                Day = 0
+                </p>
+                <p id="p2"> 
+                Latitude = 0
+                </p>
+                <p id="p3">
+                Sun Elevation = 
+                </p>
+                <p id="p4">
+                Sunrise: (None yet)
+                </p>
+                <p id="p5">
+                Sunset: (None yet)
+                </p>
+            </div>
+            
+        </div>
+
+    <canvas id="webgl" width="800" height="600" tabindex="1">
+    Please use a browser that supports "canvas"
+        
+    </canvas>
+        <script src="Libraries/cuon-utils.js"></script>
+        <script src="Libraries/webgl-utils.js"></script>
+        <script src="Libraries/webgl-debug.js"></script>
+        <script src="Libraries/cuon-matrix-quat.js"></script>
+        
+        <script src="Libraries/gl-matrix/common.js"></script>
+        <script src="Libraries/gl-matrix/vec2.js"></script>
+        
+        <script src="Draw.js"></script>
+        <script src="shaders.js"></script>
+        <script src="geometry.js"></script>
+        <script src="animation.js"></script>
+        <script src="camera control.js"></script>
+        <script src="UI.js"></script>
+    </body>
+</html>
