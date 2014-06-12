@@ -36,7 +36,7 @@ var tick = function() {
         
         heading = quatMatrix.multiplyVector3(h); */
         
-        modelMatrix.setRotate((90-latitude), 1, 0, 0);
+        modelMatrix.setRotate((90-wLatitude), 1, 0, 0);
         heading = modelMatrix.multiplyVector3(heading);
         
         up = new Vector3(u.elements);
@@ -113,11 +113,11 @@ function updateInfo(seconds, phi)
     var string = "Day: " + d.toLocaleDateString() + " " + d.toLocaleTimeString();
     document.getElementById("p1").innerHTML = string; 
     
-    string = "Latitude: " + latitude;
+    string = "Latitude: " + wLatitude;
     document.getElementById("p2").innerHTML = string;
     
     phi -= Math.PI/2;   
-    latitudeR = latitude*Math.PI/180;
+    latitudeR = wLatitude*Math.PI/180;
     hourAngle = 2*Math.PI*seconds/(60*60*24); // hour of the day in radians
     var elevation = -Math.cos(hourAngle)*Math.cos(phi)*Math.cos(latitudeR);
     elevation += Math.sin(phi)*Math.sin(latitudeR);
@@ -152,4 +152,16 @@ function updateInfo(seconds, phi)
    else string = "Sunset: " + date.toLocaleTimeString();
    document.getElementById("p5").innerHTML = string;
           
+}
+
+/**
+ * Wraps latitude in absence of proper spherical geometry
+ * @param {int} lat     Raw latitude produced by key press
+ * @return {int}        Latitude confined to -90 < x < 90
+ */ 
+function wrap(lat){
+    if(lat < 90 && lat > -90) return lat;
+    if(lat > 90) lat = 90 - (lat - 90);
+    if(lat < -90) lat = -90 - (lat + 90);
+    return wrap(lat);
 }

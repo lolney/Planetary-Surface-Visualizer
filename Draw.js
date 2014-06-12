@@ -98,6 +98,7 @@ var sunZ;
 var tilt = 23.4;
 var numDays = 365;  
 var latitude = 0;
+var wLatitude = 0;
 var longitude = 0;
 var x_s = 60;
 var pRadius = 200;

@@ -113,7 +113,9 @@ function keydown(ev, canvas, gl) {
         showConsole();
     }
     else { console.log(ev.keyCode); return; } // Prevent the unnecessary drawing
-    draw(canvas, gl);    
+    
+    wLatitude = wrap(latitude);
+    //draw(canvas, gl);    
 }
 
 /**
@@ -264,19 +266,18 @@ function planetChooser(sel)
             tilt = 97.77;
             numDays = 84.323 * 365;
             
-            pane.style.display = "inline";
+            pane.style.display = "none";
             break;
         case "B612":
             tilt = 0;
             numDays = 100;
             pRadius = 10;
             
+            pane.style.display = "none";
+            break;
+        case "Custom":            
             pane.style.display = "inline";
-        case "Custom":
-            tilt = 23.4;
-            numDays = 365;
-            
-            pane.style.display = "inline";
+            break;
     }
     
     synchUI("tilt", tilt);
