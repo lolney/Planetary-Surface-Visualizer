@@ -2,20 +2,22 @@
  * Contains methods for initializing vertices for geometric objects
  */
 
-function makeGroundGrid()
+function makeGroundGrid(XStart, YStart)
 {
     // Makes a grid of circles (uses gl.TRIANGLES)
     var iColr = new Float32Array([.1, .2, .5]); // Interior color
     var oColr = new Float32Array([.5, .2, .5]); // Exterior color
     var circleTriangles = 12;
-    gndVerts = new Float32Array(floatsPerVertex*circleTriangles*3*50*50);
+    var XNum = 100;
+    var YNum = 100;
+    gndVerts = new Float32Array(floatsPerVertex*circleTriangles*3*XNum*YNum);
     
     var j=0;
     // Go along x axis,
-    for(var XOffset = -50; XOffset < 50; XOffset+=2, j)
+    for(var XOffset = -XNum + XStart; XOffset < XNum + XStart; XOffset+=2, j)
     {
         // Go along y axis,
-        for(var YOffset = -50; YOffset < 50; YOffset+=2, j += floatsPerVertex*3)
+        for(var YOffset = -YNum + YStart; YOffset < YNum + YStart; YOffset+=2, j += floatsPerVertex*3)
         {
             // Draw an individual circle
             for(var i=0; i < circleTriangles; j+= floatsPerVertex*3, i++)
