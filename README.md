@@ -7,8 +7,8 @@ Hosted <a href="http://lolney.github.io/Planetary-Surface-Visualizer/">here</a h
 
 TODO (rough priority order):
 
-Proper latitude wrap-around <br>
-Proper time zone handling <br>
+Eye vector for zooming in/out<br>
+Proper time zone handling (/longitude)<br>
 Add presentable UI <br>
 Better ground plane <br>
 Support for different day/year lengths<br>
