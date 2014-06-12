@@ -1,9 +1,16 @@
 /* 
  * Contains dynamic elements of the program
  */
-
+var lastLat = 0;
+var lastLong = 0;
 var tick = function() {
-      
+    
+    // Use to periodically extend ground plane
+    if(Math.abs(latitude - lastLat) > 40 || Math.abs(longitude - lastLong) > 40){
+        if(Math.abs(latitude - lastLat) > 40) lastLat = latitude;
+        if(Math.abs(longitude - lastLong) > 40) lastLong = longitude;
+        initVertexBuffers(gl, longitude, latitude);
+    }
     animate();
     
     // Apply the accumulated rotation to the up, heading vectors
@@ -12,18 +19,29 @@ var tick = function() {
     
     if(lockToSun == true)
     {
-        h = new Vector3([sunX, sunY, sunZ]);
-        u = new Vector3([0,1,0]);
+        heading = new Vector3([sunX, sunY, sunZ]);
+        
+        /*
+        var axis = heading.crossProduct(h);
+        axis.normalize();
+        // Use that vector as rotation axis 
+        var a = axis.elements;
+        
+        // Find angle between heading and h
+        var angle = Math.acos(heading.dot(h)/(h.length()*heading.length()));
+        qTotView.setFromAxisAngle(a[0],a[1],a[2], - angle * 180 / Math.PI);
+        quatMatrix.setFromQuat(qTotView.x, qTotView.y, qTotView.z, qTotView.w);
+        
+        
+        
+        heading = quatMatrix.multiplyVector3(h); */
         
         modelMatrix.setRotate((90-latitude), 1, 0, 0);
+        heading = modelMatrix.multiplyVector3(heading);
         
-        heading = modelMatrix.multiplyVector3(h);
-        up = u;//modelMatrix.multiplyVector3(u);
+        up = new Vector3(u.elements);
     }
     else{
-        h = new Vector3([0,0,1]);
-        u = new Vector3([0,1,0]);
-
         quatMatrix.setFromQuat(qTotView.x, qTotView.y, qTotView.z, qTotView.w);	// Quaternion-->Matrix
         heading = quatMatrix.multiplyVector3(h);
         up = quatMatrix.multiplyVector3(u);
