@@ -220,11 +220,20 @@ function mouseMove(ev, canvas)
     mxNew = mxNew/canvas.width;
     myNew = myNew/canvas.width;
     
-    var xdrag = mxNew-x;
-    var ydrag = y-myNew;
+    var xdrag = mxNew-x + .00001;
+    var ydrag = y-myNew + .00001;
     var dist = Math.sqrt(xdrag*xdrag + ydrag*ydrag);
     
-    rotateAxis(0, xdrag + .000001, -ydrag + .000001, dist);
+    if(Math.abs(xdrag) > Math.abs(5 * ydrag))
+        rotateAxis(0, xdrag, 0, dist);
+    else if(Math.abs(ydrag) > Math.abs(5 * xdrag))
+        rotateAxis(0, 0, -ydrag, dist);
+    else{
+        ydrag = ydrag / Math.abs(ydrag);
+        xdrag = xdrag / Math.abs(xdrag);
+       // rotateAxis(0, 1*xdrag, 1*ydrag, -dist);
+    }
+       
     
    // dragQuat(mxNew-x, y-myNew);
 }

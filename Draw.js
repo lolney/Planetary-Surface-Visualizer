@@ -186,11 +186,13 @@ function main() {
 function initVertexBuffers(gl, XStart, YStart) {
 //==============================================================================
    makeGroundGrid(XStart, YStart);
-   makeSphere(1,.1,.1);
-   makeGimbal();
-   makeCylinder();
-   makeAxis();
-   makePedestal();
+   if(XStart == 0 && YStart == 0){
+        makeSphere(1,.1,.1);
+        makeGimbal();
+        makeCylinder();
+        makeAxis();
+        makePedestal();
+   }
     
   	// How much space to store all the shapes in one array?
 	// (no 'var' means this is a global variable)

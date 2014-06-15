@@ -446,3 +446,13 @@ function makeAxis()
     0.0,  0.0,  1.0,  1,  1, 0
   ]);
 }
+
+function pushPoint(array){
+    var a = new Array();
+    if(a.length > 10*floatsPerVertex) {
+        for(var i=0; i< floatsPerVertex; i++)
+            a.pop();
+    }
+    a.unshift(a[0],a[1],a[2],.6,.6,.6);
+        
+}
