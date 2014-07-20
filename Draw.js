@@ -59,9 +59,14 @@ var qTot3 = new Quaternion(0,0,0,1);
 // View rotation
 var qNewView = new Quaternion(0,0,0,1);
 var qTotView = new Quaternion(0,0,0,1);
+var qTotUp = new Quaternion(0,0,0,1);
 var quatMatrixView = new Matrix4();
 
 // Viewing globals
+
+// Starting heading/up
+var h = new Vector3([1,0,0]);
+var u = new Vector3([0,1,0]);
 
 var control = 0;
 var heading;
@@ -93,9 +98,10 @@ var sunZ;
 var tilt = 23.4;
 var numDays = 365;  
 var latitude = 0;
+var wLatitude = 0;
 var longitude = 0;
 var x_s = 60;
-var pRadius = 500;
+var pRadius = 200;
 var lockToSun = true;
 
 var matrixStack = []; // An array of matrices; for implementing scene graph
@@ -143,7 +149,7 @@ function main() {
   }
 
   // Set the vertex coordinates and color (the blue triangle is in the front)
-  var n = initVertexBuffers(gl);
+  var n = initVertexBuffers(gl, 0, 0);
   if (n < 0) {
     console.log('Failed to specify the vertex infromation');
     return;
@@ -177,14 +183,16 @@ function main() {
   tick();
 }
 
-function initVertexBuffers(gl) {
+function initVertexBuffers(gl, XStart, YStart) {
 //==============================================================================
-   makeGroundGrid();
-   makeSphere(1,.1,.1);
-   makeGimbal();
-   makeCylinder();
-   makeAxis();
-   makePedestal();
+   makeGroundGrid(XStart, YStart);
+   if(XStart == 0 && YStart == 0){
+        makeSphere(1,.1,.1);
+        makeGimbal();
+        makeCylinder();
+        makeAxis();
+        makePedestal();
+   }
     
   	// How much space to store all the shapes in one array?
 	// (no 'var' means this is a global variable)
@@ -314,6 +322,7 @@ function drawScene(gl)
   // Rotate to make a new set of 'world' drawing axes: 
   // old one had "+y points upwards", but
   modelMatrix.setIdentity();
+  modelMatrix.translate(-longitude, -latitude, 0);
   viewMatrix.rotate(-90.0, 1,0,0);	// new one has "+z points upwards",
   																		// made by rotating -90 deg on +x-axis.
   																		// Move those new drawing axes to the 

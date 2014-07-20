@@ -12,26 +12,27 @@ function keydown(ev, canvas, gl) {
     
         var headV2;
         
-        var north = vec2.clone([0, 1]);
+        var north = vec2.clone([0, -1]);
         var west = vec2.clone([1, 0]);
-        if(lockToSun) headV2 = vec2.clone(north);
-        else headV2 = vec2.clone([heading.elements[0], heading.elements[2]]);
+        headV2 = vec2.clone([heading.elements[0], heading.elements[2]]);
+        
+        var s = .5;
         
             if (ev.keyCode == 87) { // W 
-                latitude += .5 * vec2.dot(north, headV2);
-                longitude += .5 * vec2.dot(west, headV2);
+                latitude += s * vec2.dot(north, headV2);
+                longitude += s * vec2.dot(west, headV2);
             } else
             if (ev.keyCode == 83) { // S 
-                latitude -= .5 * vec2.dot(north, headV2);
-                longitude -= .5 * vec2.dot(west, headV2);
+                latitude -= s * vec2.dot(north, headV2);
+                longitude -= s * vec2.dot(west, headV2);
             } else
             if (ev.keyCode == 65) { // A 
-                longitude -= .5 * vec2.dot(north, headV2);
-                latitude -= .5 * vec2.dot(west, headV2);
+                longitude -= s * vec2.dot(north, headV2);
+                latitude += s * vec2.dot(west, headV2);
             } else
             if (ev.keyCode == 68) { // D
-                longitude += .5 * vec2.dot(north, headV2);  
-                latitude += .5 * vec2.dot(west, headV2);
+                longitude += s * vec2.dot(north, headV2);  
+                latitude -= s * vec2.dot(west, headV2);
             } else
         
         
@@ -112,7 +113,9 @@ function keydown(ev, canvas, gl) {
         showConsole();
     }
     else { console.log(ev.keyCode); return; } // Prevent the unnecessary drawing
-    draw(canvas, gl);    
+    
+    wLatitude = wrap(latitude);
+    //draw(canvas, gl);    
 }
 
 /**
@@ -217,18 +220,42 @@ function mouseMove(ev, canvas)
     mxNew = mxNew/canvas.width;
     myNew = myNew/canvas.width;
     
-    var xdrag = mxNew-x;
-    var ydrag = y-myNew;
+    var xdrag = mxNew-x + .00001;
+    var ydrag = y-myNew + .00001;
     var dist = Math.sqrt(xdrag*xdrag + ydrag*ydrag);
     
-    rotateAxis(ydrag + .000001, xdrag + .000001, 0, dist);
+    if(Math.abs(xdrag) > Math.abs(5 * ydrag))
+        rotateAxis(0, xdrag, 0, dist);
+    else if(Math.abs(ydrag) > Math.abs(5 * xdrag))
+        rotateAxis(0, 0, -ydrag, dist);
+    else{
+        ydrag = ydrag / Math.abs(ydrag);
+        xdrag = xdrag / Math.abs(xdrag);
+       // rotateAxis(0, 1*xdrag, 1*ydrag, -dist);
+    }
+       
     
    // dragQuat(mxNew-x, y-myNew);
 }
 
 function toggleLock()
 {
-    if(lockToSun) lockToSun = false;
+    if(lockToSun) {
+        // Start off from current view
+        
+        // Find vector orthogonal to h and in plane containing h, heading
+        var axis = heading.crossProduct(h);
+        axis.normalize();
+        // Use that vector as rotation axis 
+        var a = axis.elements;
+        
+        // Find angle between heading and h
+        var angle = Math.acos(heading.dot(h)/(h.length()*heading.length()));
+        qTotView.setFromAxisAngle(a[0],a[1],a[2], - angle * 180 / Math.PI);
+        quatMatrix.setFromQuat(qTotView.x, qTotView.y, qTotView.z, qTotView.w);
+        
+        lockToSun = false;
+    }
     else lockToSun = true;
 }
 
@@ -248,13 +275,18 @@ function planetChooser(sel)
             tilt = 97.77;
             numDays = 84.323 * 365;
             
+            pane.style.display = "none";
+            break;
+        case "B612":
+            tilt = 0;
+            numDays = 100;
+            pRadius = 10;
+            
+            pane.style.display = "none";
+            break;
+        case "Custom":            
             pane.style.display = "inline";
             break;
-        case "Custom":
-            tilt = 23.4;
-            numDays = 365;
-            
-            pane.style.display = "inline";
     }
     
     synchUI("tilt", tilt);
