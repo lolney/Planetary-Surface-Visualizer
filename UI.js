@@ -2,120 +2,73 @@
  * Contains callbacks for buttons, sliders, etc.
  */
 
-function keydown(ev, canvas, gl) {
+function keydown(ev) {
 //------------------------------------------------------
-//HTML calls this'Event handler' or 'callback function' when we press a key:
-
 // rotateAxis uses quaternion rotation
 
 // Moving with the arrow keys mimics moving around the planet
+    var headV2;
     
-        var headV2;
-        
-        var north = vec2.clone([0, -1]);
-        var west = vec2.clone([1, 0]);
-        headV2 = vec2.clone([heading.elements[0], heading.elements[2]]);
-        
-        var s = .5;
-        
-            if (ev.keyCode == 87) { // W 
-                latitude += s * vec2.dot(north, headV2);
-                longitude += s * vec2.dot(west, headV2);
-            } else
-            if (ev.keyCode == 83) { // S 
-                latitude -= s * vec2.dot(north, headV2);
-                longitude -= s * vec2.dot(west, headV2);
-            } else
-            if (ev.keyCode == 65) { // A 
-                longitude -= s * vec2.dot(north, headV2);
-                latitude += s * vec2.dot(west, headV2);
-            } else
-            if (ev.keyCode == 68) { // D
-                longitude += s * vec2.dot(north, headV2);  
-                latitude -= s * vec2.dot(west, headV2);
-            } else
-        
-        
-    if(ev.keyCode == 39) { // Right arrow (adjust yaw)
-      rotateAxis(0, 1, 0, -1);
-      //heading = yawMatN.multiplyVector3(heading);
-      //up = yawMatN.multiplyVector3(up);
-      } else 
-    if (ev.keyCode == 37) { // Left arrow (adjust yaw)
-      rotateAxis(0, 1, 0, 1);
-      //heading = yawMatP.multiplyVector3(heading);
-      //up = yawMatP.multiplyVector3(up);
-    } 
-        
-/*
-    if (ev.keyCode == 87) { // W (go forward, dependent on orientation)
-        g_EyeX += heading.elements[0]*.1;
-        g_EyeY += heading.elements[1]*.1;
-        g_EyeZ += heading.elements[2]*.1;
-    } else
-    if (ev.keyCode == 83) { // S (go back, dependent on orientation)
-        g_EyeX -= heading.elements[0]*.1;
-        g_EyeY -= heading.elements[1]*.1;
-        g_EyeZ -= heading.elements[2]*.1;
-    } else
-    if (ev.keyCode == 65) { // A (go left)
-        // Use cross product to find vector orthogonal to both
-        // Up and heading vectors; this should be to the left 
-        var n = heading.crossProduct(up);
-        g_EyeX -= n.elements[0]*.1;
-        g_EyeY -= n.elements[1]*.1;
-        g_EyeZ -= n.elements[2]*.1;        
-    } else
-    if (ev.keyCode == 68) { // D (go right)
-        
-        var n = heading.crossProduct(up);
-        g_EyeX += n.elements[0]*.1;
-        g_EyeY += n.elements[1]*.1;
-        g_EyeZ += n.elements[2]*.1;        
-    }
+    var north = vec2.clone([0, -1]);
+    var west = vec2.clone([1, 0]);
+    headV2 = vec2.clone([heading.elements[0], heading.elements[2]]);
+    
+    var s = .1;
 
-*/
-    else if(ev.keyCode == 82){ // R: reset
-        g_EyeX = 0;
-        g_EyeY = 0;
-        g_EyeZ = -1;
+    switch(ev.keyCode){
+        case 87: // WW
+            latitude += s * vec2.dot(north, headV2);
+            longitude += s * vec2.dot(west, headV2);
+            break;
+        case 83: // S 
+            latitude -= s * vec2.dot(north, headV2);
+            longitude -= s * vec2.dot(west, headV2);
+            break;
+        case 65: // A 
+            longitude -= s * vec2.dot(north, headV2);
+            latitude += s * vec2.dot(west, headV2);
+            break;
+        case 68:// D
+            longitude += s * vec2.dot(north, headV2);  
+            latitude -= s * vec2.dot(west, headV2);
+            break;
         
-        resetPitch();
+        case 39: // Right arrow (adjust yaw)
+          rotateAxis(0, 1, 0, -1);
+          break;
+        case 37: // Left arrow (adjust yaw)
+          rotateAxis(0, 1, 0, 1);
+          break;
+            
+        case ev.keyCode == 82: // R: reset
+            g_EyeX = 0;
+            g_EyeY = 0;
+            g_EyeZ = -1;
+            
+            resetPitch();
+            break;
+            
+        case 69: // E: adjust pitch
+            rotateAxis(1, 0, 0, 1);
+            break;
+        case 81: // Q: adjust pitch
+            rotateAxis(1, 0, 0, -1);
+            break;    
+        case 90: // Z:  adjust roll
+            rotateAxis(0, 0, 1, 1);
+            break;
+        case  88: // X:  adjust roll
+            rotateAxis(0, 0, 1, -1);
+            break;
         
-    }
-    
-    else if(ev.keyCode == 32){ // Space: change camera
-        if(camera === "ortho") camera = "persp";
-        else camera = "ortho";
-    }
-    
-    else if(ev.keyCode == 69){ // E: adjust pitch
-        rotateAxis(1, 0, 0, 1);
-        //heading = pitchMatP.multiplyVector3(heading);
-        //up = pitchMatP.multiplyVector3(up);
-    } else if(ev.keyCode == 81){ // Q: adjust pitch
-        rotateAxis(1, 0, 0, -1);
-        //heading = pitchMatN.multiplyVector3(heading);
-        //up = pitchMatN.multiplyVector3(up);
-    }
-    
-    else if(ev.keyCode == 90){ // Z:  adjust roll
-        rotateAxis(0, 0, 1, 1);
-        //up = rollMatN.multiplyVector3(up);
-        //heading = rollMatN.multiplyVector3(heading);
-    } else if(ev.keyCode == 88){ // X:  adjust roll
-        rotateAxis(0, 0, 1, -1);
-        //up = rollMatP.multiplyVector3(up);
-        //heading = rollMatP.multiplyVector3(heading);
-    }
-    
-    else if(ev.keyCode == 112){ // F1: help
-        showConsole();
-    }
-    else { console.log(ev.keyCode); return; } // Prevent the unnecessary drawing
+        case 112: // F1: help
+            showConsole();
+            break;
+        default:
+            console.log(ev.keyCode); return;
+        } // Prevent the unnecessary drawing
     
     wLatitude = wrap(latitude);
-    //draw(canvas, gl);    
 }
 
 /**
@@ -259,6 +212,7 @@ function toggleLock()
     else lockToSun = true;
 }
 
+// TODO: Move to webserver
 function planetChooser(sel)
 {
     var  value = sel.options[sel.selectedIndex].value;

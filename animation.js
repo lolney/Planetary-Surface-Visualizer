@@ -113,7 +113,7 @@ function updateInfo(seconds, phi)
     var string = "Day: " + d.toLocaleDateString() + " " + d.toLocaleTimeString();
     document.getElementById("p1").innerHTML = string; 
     
-    string = "Latitude: " + wLatitude;
+    string = "Latitude: " + wLatitude.toFixed(2);
     document.getElementById("p2").innerHTML = string;
     
     phi -= Math.PI/2;   

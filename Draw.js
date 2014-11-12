@@ -169,7 +169,7 @@ function main() {
   // Create the matrix to specify the view matrix
   viewMatrix = new Matrix4();
   // Register the event handler to be called on key press
- document.onkeydown = function(ev){ keydown(ev, canvas, gl); };
+ document.onkeydown = function(ev){ keydown(ev); };
  canvas.onmousedown = function(ev){ click(ev, canvas); };
  canvas.onmousemove = function(ev){ if(isMouseDown == true) mouseMove(ev, canvas); };
  canvas.onmouseup   = function() { isMouseDown = false; };
