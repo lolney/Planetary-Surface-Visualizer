@@ -7,58 +7,59 @@ function keydown(ev) {
 // rotateAxis uses quaternion rotation
 
 // Moving with the arrow keys mimics moving around the planet
+    var c = globals.camera;
+    var a = globals.animation;
     var headV2;
     
     var north = vec2.clone([0, -1]);
     var west = vec2.clone([1, 0]);
-    headV2 = vec2.clone([heading.elements[0], heading.elements[2]]);
+    headV2 = vec2.clone([c.heading.elements[0], c.heading.elements[2]]);
     
-    var s = .1;
+    var s = .4;
 
     switch(ev.keyCode){
         case 87: // WW
-            latitude += s * vec2.dot(north, headV2);
-            longitude += s * vec2.dot(west, headV2);
+            a.raw_latitude += s * vec2.dot(north, headV2);
+            a.raw_longitude += s * vec2.dot(west, headV2);
             break;
         case 83: // S 
-            latitude -= s * vec2.dot(north, headV2);
-            longitude -= s * vec2.dot(west, headV2);
+            a.raw_latitude -= s * vec2.dot(north, headV2);
+            a.raw_longitude -= s * vec2.dot(west, headV2);
             break;
         case 65: // A 
-            longitude -= s * vec2.dot(north, headV2);
-            latitude += s * vec2.dot(west, headV2);
+            a.raw_longitude -= s * vec2.dot(north, headV2);
+            a.raw_latitude += s * vec2.dot(west, headV2);
             break;
         case 68:// D
-            longitude += s * vec2.dot(north, headV2);  
-            latitude -= s * vec2.dot(west, headV2);
+            a.raw_longitude += s * vec2.dot(north, headV2);  
+            a.raw_latitude -= s * vec2.dot(west, headV2);
             break;
         
         case 39: // Right arrow (adjust yaw)
-          rotateAxis(0, 1, 0, -1);
+          rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
           break;
         case 37: // Left arrow (adjust yaw)
-          rotateAxis(0, 1, 0, 1);
+          rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
           break;
             
-        case ev.keyCode == 82: // R: reset
+        case 82: // R: reset
             g_EyeX = 0;
             g_EyeY = 0;
             g_EyeZ = -1;
             
-            resetPitch();
             break;
             
         case 69: // E: adjust pitch
-            rotateAxis(1, 0, 0, 1);
+            rotateAxis(1, 0, 0, 1, globals.quaternions['view']);
             break;
         case 81: // Q: adjust pitch
-            rotateAxis(1, 0, 0, -1);
+            rotateAxis(1, 0, 0, -1, globals.quaternions['view']);
             break;    
         case 90: // Z:  adjust roll
-            rotateAxis(0, 0, 1, 1);
+            rotateAxis(0, 0, 1, 1, globals.quaternions['view']);
             break;
         case  88: // X:  adjust roll
-            rotateAxis(0, 0, 1, -1);
+            rotateAxis(0, 0, 1, -1, globals.quaternions['view']);
             break;
         
         case 112: // F1: help
@@ -68,7 +69,7 @@ function keydown(ev) {
             console.log(ev.keyCode); return;
         } // Prevent the unnecessary drawing
     
-    wLatitude = wrap(latitude);
+    a.latitude = wrap(a.raw_latitude);
 }
 
 /**
@@ -99,7 +100,7 @@ function getValue(slider, textBox, idSwitch)
     switch(slider)
     {
         case "speedS":
-            x_s = temp;
+            globals.animation.x_s = temp;
             break;
     }
     
@@ -118,19 +119,19 @@ function getValue2(slider, textBox, idSwitch)
     }
     
     // to fix an odd bug in which the number didn't seem to be formatted properly:
-    var temp = Math.pow(y.value, 1); 
+    var temp = Math.pow(y.value, 1);
     
     switch(slider)
     {
         case "tiltS":
-                tilt = temp;
+                globals.currentPlanet.tilt = temp;
                 console.log("Caled");
             break;
         case "radiusS":
-                pRadius = temp;
+                globals.currentPlanet.radius = temp;
                 break;
         case "yearS":
-                numDays = temp;
+                globals.currentPlanet.numDays = temp;
             break;
     }
     
@@ -193,10 +194,12 @@ function mouseMove(ev, canvas)
 
 function toggleLock()
 {
-    if(lockToSun) {
+    if(globals.camera.lockToSun) {
         // Start off from current view
         
         // Find vector orthogonal to h and in plane containing h, heading
+        var heading = globals.camera.heading;
+        var h = globals.camera.h;
         var axis = heading.crossProduct(h);
         axis.normalize();
         // Use that vector as rotation axis 
@@ -204,12 +207,11 @@ function toggleLock()
         
         // Find angle between heading and h
         var angle = Math.acos(heading.dot(h)/(h.length()*heading.length()));
-        qTotView.setFromAxisAngle(a[0],a[1],a[2], - angle * 180 / Math.PI);
-        quatMatrix.setFromQuat(qTotView.x, qTotView.y, qTotView.z, qTotView.w);
+        globals.quaternions['view'].total.setFromAxisAngle(a[0],a[1],a[2], - angle * 180 / Math.PI);
         
-        lockToSun = false;
+        globals.camera.lockToSun = false;
     }
-    else lockToSun = true;
+    else globals.camera.lockToSun = true;
 }
 
 // TODO: Move to webserver
@@ -220,22 +222,27 @@ function planetChooser(sel)
 
     switch(value){
         case "Earth":
-            tilt = 23.4;
-            numDays = 365;
-            
+            globals.currentPlanet = {
+                tilt : 23.4,
+                numDays : 365,
+                radius : 200
+            }    
             pane.style.display = "none";
             break;
         case "Uranus":
-            tilt = 97.77;
-            numDays = 84.323 * 365;
-            
+            globals.currentPlanet = {
+                tilt : 97.4,
+                numDays : 84.323 * 365,
+                radius : 200
+            }            
             pane.style.display = "none";
             break;
         case "B612":
-            tilt = 0;
-            numDays = 100;
-            pRadius = 10;
-            
+            globals.currentPlanet = {
+                tilt : 0,
+                numDays : 100,
+                radius : 10
+            }            
             pane.style.display = "none";
             break;
         case "Custom":            
@@ -243,9 +250,9 @@ function planetChooser(sel)
             break;
     }
     
-    synchUI("tilt", tilt);
-    synchUI("radius", pRadius);
-    synchUI("year", numDays);
+    synchUI("tilt", globals.currentPlanet.tilt);
+    synchUI("radius", globals.currentPlanet.radius);
+    synchUI("year", globals.currentPlanet.numDays);
     
 }
 
