@@ -16,9 +16,9 @@ function makeGroundGrid(XStart, YStart)
 {
     // Makes a grid of circles (uses gl.TRIANGLES)
     floatsPerVertex = globals.params.floatsPerVertex;
-    var iColr = new Float32Array([.1, .2, 0]); // Interior color
-    var oColr = new Float32Array([.5, .2, 0]); // Exterior color
-    var circleTriangles = 12;
+    var iColr = new Float32Array([.1, .2, .6]); // Interior color
+    var oColr = new Float32Array([.5, .2, .6]); // Exterior color
+    var circleTriangles = 24;
     var XNum = 100;
     var YNum = 100;
     gndVerts = new Float32Array(floatsPerVertex*circleTriangles*3*XNum*YNum);

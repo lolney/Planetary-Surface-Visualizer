@@ -37,7 +37,7 @@ var Globals = function(){
     // Planetary parameters
     tilt : 23.4,
     numDays : 365,
-    radius : 200,
+    radius : 200
 
   }
 
@@ -176,8 +176,6 @@ function makeObjects(){
         model.setIdentity(); 
         model.rotate(-90.0, 1,0,0);   
         model.translate(-a.longitude, -a.latitude, 0);
-        model.translate(0.0, 0.0, -0.6);
-        model.scale(100,100,1); 
 
         return model;
       },
@@ -202,16 +200,14 @@ function initVertexBuffers(gl) {
   var verticesColors = new Float32Array(size);
 	// Copy them:  remember where to start for each shape:
         
-
   i = 0;
   for(key in globals.objects){
     obj = globals.objects[key];
     obj.start = i;
-    for(j=0; j<obj.vertices.length; j++, i++){
-      verticesColors[i] = obj.vertices[j];
-    }
+    verticesColors.set(obj.vertices, i)
+    i += obj.vertices.length;
   }
-  
+
   // Create a buffer object
   var vertexColorbuffer = gl.createBuffer();  
   if (!vertexColorbuffer) {

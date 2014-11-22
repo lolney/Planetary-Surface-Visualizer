@@ -3,6 +3,7 @@
  */
 var lastLat = 0;
 var lastLong = 0;
+oii = 0;
 var tick = function() {
 
     var p = globals.currentPlanet;
@@ -12,13 +13,21 @@ var tick = function() {
     if(Math.abs(a.raw_latitude - lastLat) > 40 || Math.abs(a.raw_longitude - lastLong) > 40){
         if(Math.abs(a.raw_latitude - lastLat) > 40) lastLat = a.raw_latitude;
         if(Math.abs(a.raw_longitude - lastLong) > 40) lastLong = a.raw_longitude;
-        globals.objects['Ground'].vertices = makeGroundGrid(a.raw_longitude, a.raw_latitude);
-        initVertexBuffers(globals.gl);
+
+        var worker = new Worker("makeGroundGrid.js");
+        worker.onmessage = function(ev){
+          var data = new Float32Array(ev.data);
+          globals.objects['Ground'].vertices = data;
+          initVertexBuffers(globals.gl);
+        }
+        var mes = {latitude: a.raw_latitude, longitude: a.raw_longitude};
+        worker.postMessage(JSON.stringify(mes));        
     }
     animate();
     keydown();
     
-    // Apply the accumulated rotation to the up, heading vectors
+    //globals.camera.eye = new Vector3([0,1000,0]);
+    
     m = new Matrix4();
     if(globals.camera.lockToSun)
     {        
@@ -32,25 +41,23 @@ var tick = function() {
         m.setFromQuat(q.x, q.y, q.z, q.w);	// Quaternion-->Matrix
         globals.camera.heading = m.multiplyVector3(globals.camera.h);
         globals.camera.up = m.multiplyVector3(globals.camera.u);
-    }
+    } 
     
     // Get the center position from eye position, heading
     h = globals.camera.heading;
-    p = globals.camera.position.elements;
+    po = globals.camera.position.elements;
     e = globals.camera.eye.elements;
     h.normalize();
-    p[0] = e[0] + h.elements[0];
-    p[1] = e[1] + h.elements[1];
-    p[2] = e[2] + h.elements[2];
+    po[0] = e[0] + h.elements[0];
+    po[1] = e[1] + h.elements[1];
+    po[2] = e[2] + h.elements[2];
     
     var u_Radius = globals.gl.getUniformLocation(globals.gl.program, 'u_Radius');
     if (!u_Radius) { 
         console.log('Failed to get u_Radius');
-        return;
-    }
-    globals.gl.uniform1f(u_Radius, p.radius);
+    } else
+      globals.gl.uniform1f(u_Radius, p.radius);
     
-
     draw(globals.canvas, globals.gl);  
     requestAnimationFrame(tick, globals.canvas);   // Request that the browser ?calls tick
        
@@ -68,12 +75,12 @@ function animate()
   var totalElapsed = a.now - a.startTime;
   a.last = a.now;
   
-  if(fps.length == 50){
+  if(fps.length == 100){
     avg = 0;
     for(f in fps){
       avg += fps[f];
     }
-    avg /= 50;
+    avg /= 100;
     console.log("Fps: " + avg);
     fps = [];
   }

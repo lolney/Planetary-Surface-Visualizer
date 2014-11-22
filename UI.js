@@ -75,6 +75,33 @@ function keydown() {
     a.latitude = wrap(a.raw_latitude);
 }
 
+function tangetSphere(lng, lat){
+    r = globals.currentPlanet.radius;
+    u = new Vector3([-r*Math.sin(lng)*Math.sin(lat), r*Math.sin(lat)*Math.cos(lng),0]);
+    v = new Vector3([   r*Math.cos(lat)*Math.cos(lng),
+                        r*Math.sin(lng)*Math.cos(lat),
+                        r*Math.sin(lat)]);
+
+    return {lng: lng * u, lat: lat * v};
+
+}
+
+function projSphere(point){
+    l = point.length();
+    p = r * point / l;
+    lat = acos(p[2] / p.length);
+    lng = atan(p[1]/p[0]);
+    return {lat: lat, lng : lng};
+}
+
+// Project p + heading*speed onto sphere 
+    // (heading vector represents scales of u and v, so find tangent vector of sphere first)
+// Find parametric form for great circle
+// Find tangent vector at end point of great circle - this becomes new heading
+    // Project onto u, v at this point to find
+
+
+
 /**
 * Gets values from the textboxes, sliders 
 * And keep them synchronized
