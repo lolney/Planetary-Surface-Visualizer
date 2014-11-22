@@ -2,12 +2,23 @@
  * Contains methods for initializing vertices for geometric objects
  */
 
+ function dumbGrid(){
+ 	var gndVerts = new Float32Array([
+    -1.0,  1.0,  0.0,  1,  1, .5,
+    1.0,  0.0,  0.0,  0,  1, .5,
+    -1.0,  -1.0,  0.0,  1,  1, .5,
+  ]);
+
+    return gndVerts;
+ }
+
 function makeGroundGrid(XStart, YStart)
 {
     // Makes a grid of circles (uses gl.TRIANGLES)
-    var iColr = new Float32Array([.1, .2, .5]); // Interior color
-    var oColr = new Float32Array([.5, .2, .5]); // Exterior color
-    var circleTriangles = 12;
+    floatsPerVertex = globals.params.floatsPerVertex;
+    var iColr = new Float32Array([.1, .2, .6]); // Interior color
+    var oColr = new Float32Array([.5, .2, .6]); // Exterior color
+    var circleTriangles = 24;
     var XNum = 100;
     var YNum = 100;
     gndVerts = new Float32Array(floatsPerVertex*circleTriangles*3*XNum*YNum);
@@ -49,6 +60,8 @@ function makeGroundGrid(XStart, YStart)
         }
     }
     
+    return gndVerts;
+    
 }
 
 function makeSphere(r, g, b) {
@@ -67,7 +80,7 @@ function makeSphere(r, g, b) {
   var sliceAngle = Math.PI/slices;	// lattitude angle spanned by one slice.
 
 	// Create a (global) array to hold this sphere's vertices:
-  sphVerts = new Float32Array(  ((slices * 2 * sliceVerts) -2) * floatsPerVertex);
+  var sphVerts = new Float32Array(  ((slices * 2 * sliceVerts) -2) * globals.params.floatsPerVertex);
 										// # of vertices * # of elements needed to store them. 
 										// each slice requires 2*sliceVerts vertices except 1st and
 										// last ones, which require only 2*sliceVerts-1.
@@ -99,7 +112,7 @@ function makeSphere(r, g, b) {
 		// go around the entire slice, generating TRIANGLE_STRIP verts
 		// (Note we don't initialize j; grows with each new attrib,vertex, and slice)
 		if(s==slices-1) isLast=1;	// skip last vertex of last slice.
-		for(v=isFirst; v< 2*sliceVerts-isLast; v++, j+=floatsPerVertex) {	
+		for(v=isFirst; v< 2*sliceVerts-isLast; v++, j+=globals.params.floatsPerVertex) {	
 			if(v%2==0)
 			{				// put even# vertices at the the slice's top edge
 							// (why PI and not 2*PI? because 0 <= v < 2*sliceVerts
@@ -132,6 +145,7 @@ function makeSphere(r, g, b) {
 			}
 		}
 	}
+	return sphVerts;
 }
 
 function makeGimbal()
@@ -143,10 +157,10 @@ function makeGimbal()
     var outerRadius = 1;
     var innerRadius = .9;
     var width = .1;
-    gimbalVerts = new Float32Array((ringverts * 4) * floatsPerVertex);
+    var gimbalVerts = new Float32Array((ringverts * 4) * globals.params.floatsPerVertex);
     
     // Upper ring
-    for(i = 0, v = 1; v < ringverts + 1; v++, i+=floatsPerVertex)
+    for(i = 0, v = 1; v < ringverts + 1; v++, i+=globals.params.floatsPerVertex)
     {
         if(v % 2 != 0){
             gimbalVerts[i] = Math.cos(2*Math.PI*v/ringverts);
@@ -169,7 +183,7 @@ function makeGimbal()
     
     
     // Lower ring
-    for(v = 1; v < ringverts + 1; v++, i+=floatsPerVertex)
+    for(v = 1; v < ringverts + 1; v++, i+=globals.params.floatsPerVertex)
     {
         if(v % 2 != 0){
             gimbalVerts[i] = Math.cos(2*Math.PI*v/ringverts);
@@ -191,7 +205,7 @@ function makeGimbal()
     }
     
     // Connecting ring (outer)
-    for(v = 1; v < ringverts + 1; v++, i+=floatsPerVertex)
+    for(v = 1; v < ringverts + 1; v++, i+=globals.params.floatsPerVertex)
     {
         if(v % 2 != 0){
             gimbalVerts[i] = Math.cos(2*Math.PI*v/ringverts);
@@ -214,7 +228,7 @@ function makeGimbal()
         
     
     // Connecting ring (inner)
-    for(v = 1; v < ringverts + 1; v++, i+=floatsPerVertex)
+    for(v = 1; v < ringverts + 1; v++, i+=globals.params.floatsPerVertex)
     {
         if(v % 2 != 0){
             gimbalVerts[i] = innerRadius*Math.cos(2*Math.PI*v/ringverts);
@@ -234,6 +248,8 @@ function makeGimbal()
             gimbalVerts[i+5] = .5;
         }
     }
+
+    return gimbalVerts;
     
     
 }
@@ -251,12 +267,12 @@ function makeCylinder() {
  var botRadius = 1;		// radius of bottom of cylinder (top always 1.0)
  
  // Create a (global) array to hold this cylinder's vertices;
- cylVerts = new Float32Array(  ((capVerts*6) -2) * floatsPerVertex);
+ var cylVerts = new Float32Array(  ((capVerts*6) -2) * globals.params.floatsPerVertex);
 										// # of vertices * # of elements needed to store them. 
 
 	// Create circle-shaped top cap of cylinder at z=+1.0, radius 1.0
 	// v counts vertices: j counts array elements (vertices * elements per vertex)
-	for(v=1,j=0; v<2*capVerts; v++,j+=floatsPerVertex) {	
+	for(v=1,j=0; v<2*capVerts; v++,j+=globals.params.floatsPerVertex) {	
 		// skip the first vertex--not needed.
 		if(v%2==0)
 		{				// put even# vertices at center of cylinder's top cap:
@@ -283,7 +299,7 @@ function makeCylinder() {
 	}
 	// Create the cylinder side walls, made of 2*capVerts vertices.
 	// v counts vertices within the wall; j continues to count array elements
-	for(v=0; v< 2*capVerts; v++, j+=floatsPerVertex) {
+	for(v=0; v< 2*capVerts; v++, j+=globals.params.floatsPerVertex) {
 		if(v%2==0)	// position all even# vertices along top cap:
 		{		
 				cylVerts[j  ] = Math.cos(Math.PI*(v)/capVerts);		// x
@@ -307,7 +323,7 @@ function makeCylinder() {
 	}
 	// Create the cylinder bottom cap, made of 2*capVerts -1 vertices.
 	// v counts the vertices in the cap; j continues to count array elements
-	for(v=0; v < (2*capVerts -1); v++, j+= floatsPerVertex) {
+	for(v=0; v < (2*capVerts -1); v++, j+= globals.params.floatsPerVertex) {
 		if(v%2==0) {	// position even #'d vertices around bot cap's outer edge
 			cylVerts[j  ] = botRadius * Math.cos(Math.PI*(v)/capVerts);		// x
 			cylVerts[j+1] = botRadius * Math.sin(Math.PI*(v)/capVerts);		// y
@@ -326,6 +342,8 @@ function makeCylinder() {
 			cylVerts[j+5]=botColr[2];
 		}
 	}
+
+	return cylVerts;
 }
 
 function makePedestal() {
@@ -341,12 +359,12 @@ function makePedestal() {
  var steps = 6;
  
  // Create a (global) array to hold this cylinder's vertices;
- pedVerts = new Float32Array(  ((capVerts*4*steps*2) -2) * floatsPerVertex);
+ var pedVerts = new Float32Array(  ((capVerts*4*steps*2) -2) * globals.params.floatsPerVertex);
 										// # of vertices * # of elements needed to store them. 
 
 	// Create circle-shaped top cap of cylinder at z=+1.0, radius 1.0
 	// v counts vertices: j counts array elements (vertices * elements per vertex)
-	for(v=1,j=0; v<2*capVerts; v++,j+=floatsPerVertex) {	
+	for(v=1,j=0; v<2*capVerts; v++,j+=globals.params.floatsPerVertex) {	
 		// skip the first vertex--not needed.
 		if(v%2==0)
 		{				// put even# vertices at center of cylinder's top cap:
@@ -378,7 +396,7 @@ function makePedestal() {
         for(var i=steps; i>0; i--)
         {
              
-            for(v=0; v< 2*capVerts; v++, j+=floatsPerVertex) {
+            for(v=0; v< 2*capVerts; v++, j+=globals.params.floatsPerVertex) {
 		if(v%2 != 0)	// position all odd# vertices along the top cap:
 		{		
                                 radius = topRadius + Math.pow(((steps - i)/steps), 3)*(botRadius-topRadius);
@@ -411,7 +429,7 @@ function makePedestal() {
         
 	// Create the cylinder bottom cap, made of 2*capVerts -1 vertices.
 	// v counts the vertices in the cap; j continues to count array elements
-	for(v=0; v < (2*capVerts -1); v++, j+= floatsPerVertex) {
+	for(v=0; v < (2*capVerts -1); v++, j+= globals.params.floatsPerVertex) {
 		if(v%2==0) {	// position even #'d vertices around bot cap's outer edge
 			pedVerts[j  ] = botRadius * Math.cos(Math.PI*(v)/capVerts);		// x
 			pedVerts[j+1] = botRadius * Math.sin(Math.PI*(v)/capVerts);		// y
@@ -430,12 +448,14 @@ function makePedestal() {
 			pedVerts[j+5]=botColr[2];
 		}
 	}
+
+	return pedVerts;
 }
 
 function makeAxis()
 {
     // To be drawn as lines representing the drawing axes 
-    axisVerts = new Float32Array([
+    var axisVerts = new Float32Array([
     0.0,  0.0,  0.0,  1,  1, 1,
     1.0,  0.0,  0.0,  0,  1, 1,
     
@@ -445,12 +465,14 @@ function makeAxis()
     0.0,  0.0,  0.0,  1,  1, 1,
     0.0,  0.0,  1.0,  1,  1, 0
   ]);
+
+    return axisVerts;
 }
 
 function pushPoint(array){
     var a = new Array();
-    if(a.length > 10*floatsPerVertex) {
-        for(var i=0; i< floatsPerVertex; i++)
+    if(a.length > 10*globals.params.floatsPerVertex) {
+        for(var i=0; i< globals.params.floatsPerVertex; i++)
             a.pop();
     }
     a.unshift(a[0],a[1],a[2],.6,.6,.6);

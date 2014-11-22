@@ -2,121 +2,105 @@
  * Contains callbacks for buttons, sliders, etc.
  */
 
-function keydown(ev, canvas, gl) {
+function keydown() {
 //------------------------------------------------------
-//HTML calls this'Event handler' or 'callback function' when we press a key:
-
 // rotateAxis uses quaternion rotation
 
 // Moving with the arrow keys mimics moving around the planet
+    var c = globals.camera;
+    var a = globals.animation;
+    var headV2;
     
-        var headV2;
-        
-        var north = vec2.clone([0, -1]);
-        var west = vec2.clone([1, 0]);
-        headV2 = vec2.clone([heading.elements[0], heading.elements[2]]);
-        
-        var s = .5;
-        
-            if (ev.keyCode == 87) { // W 
-                latitude += s * vec2.dot(north, headV2);
-                longitude += s * vec2.dot(west, headV2);
-            } else
-            if (ev.keyCode == 83) { // S 
-                latitude -= s * vec2.dot(north, headV2);
-                longitude -= s * vec2.dot(west, headV2);
-            } else
-            if (ev.keyCode == 65) { // A 
-                longitude -= s * vec2.dot(north, headV2);
-                latitude += s * vec2.dot(west, headV2);
-            } else
-            if (ev.keyCode == 68) { // D
-                longitude += s * vec2.dot(north, headV2);  
-                latitude -= s * vec2.dot(west, headV2);
-            } else
-        
-        
-    if(ev.keyCode == 39) { // Right arrow (adjust yaw)
-      rotateAxis(0, 1, 0, -1);
-      //heading = yawMatN.multiplyVector3(heading);
-      //up = yawMatN.multiplyVector3(up);
-      } else 
-    if (ev.keyCode == 37) { // Left arrow (adjust yaw)
-      rotateAxis(0, 1, 0, 1);
-      //heading = yawMatP.multiplyVector3(heading);
-      //up = yawMatP.multiplyVector3(up);
-    } 
-        
-/*
-    if (ev.keyCode == 87) { // W (go forward, dependent on orientation)
-        g_EyeX += heading.elements[0]*.1;
-        g_EyeY += heading.elements[1]*.1;
-        g_EyeZ += heading.elements[2]*.1;
-    } else
-    if (ev.keyCode == 83) { // S (go back, dependent on orientation)
-        g_EyeX -= heading.elements[0]*.1;
-        g_EyeY -= heading.elements[1]*.1;
-        g_EyeZ -= heading.elements[2]*.1;
-    } else
-    if (ev.keyCode == 65) { // A (go left)
-        // Use cross product to find vector orthogonal to both
-        // Up and heading vectors; this should be to the left 
-        var n = heading.crossProduct(up);
-        g_EyeX -= n.elements[0]*.1;
-        g_EyeY -= n.elements[1]*.1;
-        g_EyeZ -= n.elements[2]*.1;        
-    } else
-    if (ev.keyCode == 68) { // D (go right)
-        
-        var n = heading.crossProduct(up);
-        g_EyeX += n.elements[0]*.1;
-        g_EyeY += n.elements[1]*.1;
-        g_EyeZ += n.elements[2]*.1;        
-    }
+    var north = vec2.clone([0, -1]);
+    var west = vec2.clone([1, 0]);
+    headV2 = vec2.clone([c.heading.elements[0], c.heading.elements[2]]);
+    
+    var s = .01;
 
-*/
-    else if(ev.keyCode == 82){ // R: reset
-        g_EyeX = 0;
-        g_EyeY = 0;
-        g_EyeZ = -1;
-        
-        resetPitch();
-        
+    for(i in globals.keyCodes){
+        keycode = globals.keyCodes[i];
+        switch(keycode){
+            case 87: // W
+                a.raw_latitude += s * vec2.dot(north, headV2);
+                a.raw_longitude += s * vec2.dot(west, headV2);
+                break;
+            case 83: // S 
+                a.raw_latitude -= s * vec2.dot(north, headV2);
+                a.raw_longitude -= s * vec2.dot(west, headV2);
+                break;
+            case 65: // A 
+                a.raw_longitude -= s * vec2.dot(north, headV2);
+                a.raw_latitude += s * vec2.dot(west, headV2);
+                break;
+            case 68:// D
+                a.raw_longitude += s * vec2.dot(north, headV2);  
+                a.raw_latitude -= s * vec2.dot(west, headV2);
+                break;
+            
+            case 39: // Right arrow (adjust yaw)
+              rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
+              break;
+            case 37: // Left arrow (adjust yaw)
+              rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
+              break;
+                
+            case 82: // R: reset
+                g_EyeX = 0;
+                g_EyeY = 0;
+                g_EyeZ = -1;
+                
+                break;
+                
+            case 69: // E: adjust pitch
+                rotateAxis(1, 0, 0, 1, globals.quaternions['view']);
+                break;
+            case 81: // Q: adjust pitch
+                rotateAxis(1, 0, 0, -1, globals.quaternions['view']);
+                break;    
+            case 90: // Z:  adjust roll
+                rotateAxis(0, 0, 1, 1, globals.quaternions['view']);
+                break;
+            case  88: // X:  adjust roll
+                rotateAxis(0, 0, 1, -1, globals.quaternions['view']);
+                break;
+            
+            case 112: // F1: help
+                showConsole();
+                break;
+            default:
+                console.log(keycode); return;
+            } // Prevent the unnecessary drawing
     }
     
-    else if(ev.keyCode == 32){ // Space: change camera
-        if(camera === "ortho") camera = "persp";
-        else camera = "ortho";
-    }
-    
-    else if(ev.keyCode == 69){ // E: adjust pitch
-        rotateAxis(1, 0, 0, 1);
-        //heading = pitchMatP.multiplyVector3(heading);
-        //up = pitchMatP.multiplyVector3(up);
-    } else if(ev.keyCode == 81){ // Q: adjust pitch
-        rotateAxis(1, 0, 0, -1);
-        //heading = pitchMatN.multiplyVector3(heading);
-        //up = pitchMatN.multiplyVector3(up);
-    }
-    
-    else if(ev.keyCode == 90){ // Z:  adjust roll
-        rotateAxis(0, 0, 1, 1);
-        //up = rollMatN.multiplyVector3(up);
-        //heading = rollMatN.multiplyVector3(heading);
-    } else if(ev.keyCode == 88){ // X:  adjust roll
-        rotateAxis(0, 0, 1, -1);
-        //up = rollMatP.multiplyVector3(up);
-        //heading = rollMatP.multiplyVector3(heading);
-    }
-    
-    else if(ev.keyCode == 112){ // F1: help
-        showConsole();
-    }
-    else { console.log(ev.keyCode); return; } // Prevent the unnecessary drawing
-    
-    wLatitude = wrap(latitude);
-    //draw(canvas, gl);    
+    a.latitude = wrap(a.raw_latitude);
 }
+
+function tangetSphere(lng, lat){
+    r = globals.currentPlanet.radius;
+    u = new Vector3([-r*Math.sin(lng)*Math.sin(lat), r*Math.sin(lat)*Math.cos(lng),0]);
+    v = new Vector3([   r*Math.cos(lat)*Math.cos(lng),
+                        r*Math.sin(lng)*Math.cos(lat),
+                        r*Math.sin(lat)]);
+
+    return {lng: lng * u, lat: lat * v};
+
+}
+
+function projSphere(point){
+    l = point.length();
+    p = r * point / l;
+    lat = acos(p[2] / p.length);
+    lng = atan(p[1]/p[0]);
+    return {lat: lat, lng : lng};
+}
+
+// Project p + heading*speed onto sphere 
+    // (heading vector represents scales of u and v, so find tangent vector of sphere first)
+// Find parametric form for great circle
+// Find tangent vector at end point of great circle - this becomes new heading
+    // Project onto u, v at this point to find
+
+
 
 /**
 * Gets values from the textboxes, sliders 
@@ -130,8 +114,12 @@ function keydown(ev, canvas, gl) {
  */ 
 function getValue(slider, textBox, idSwitch)
 {
+
     var x = document.getElementById(textBox);
     var y = document.getElementById(slider);
+
+    if(!x.value.match(/^\d+(\.\d+)?$/)) return;
+
     if(idSwitch === 0)
     {    
         x.value = Math.pow(24, y.value);
@@ -139,14 +127,14 @@ function getValue(slider, textBox, idSwitch)
     {
         y.value = Math.log(x.value)/Math.log(24);
     }
-    
-    // to fix an odd bug in which the number didn't seem to be formatted properly:
-    var temp = Math.pow(x.value, 1); 
-    
+
+    temp = Number(x.value);
+    console.log(temp);
+
     switch(slider)
     {
         case "speedS":
-            x_s = temp;
+            globals.animation.x_s = temp;
             break;
     }
     
@@ -154,8 +142,12 @@ function getValue(slider, textBox, idSwitch)
 
 function getValue2(slider, textBox, idSwitch)
 {
+
     var x = document.getElementById(textBox);
     var y = document.getElementById(slider);
+
+    if(!x.value.match(/^\d+(\.\d+)?$/)) return;
+
     if(idSwitch === 0)
     {    
         x.value = y.value;
@@ -163,21 +155,19 @@ function getValue2(slider, textBox, idSwitch)
     {
         y.value = x.value;
     }
-    
-    // to fix an odd bug in which the number didn't seem to be formatted properly:
-    var temp = Math.pow(y.value, 1); 
+
+    temp = Number(y.value);
     
     switch(slider)
     {
         case "tiltS":
-                tilt = temp;
-                console.log("Caled");
+                globals.currentPlanet.tilt = temp;
             break;
         case "radiusS":
-                pRadius = temp;
+                globals.currentPlanet.radius = temp;
                 break;
         case "yearS":
-                numDays = temp;
+                globals.currentPlanet.numDays = temp;
             break;
     }
     
@@ -197,53 +187,51 @@ function behaviorChange(sel){
        
 }
 
+function changeLatitude(elem){
+    if(elem.value.match(/^\d+(\.\d+)?$/)){
+        globals.animation.latitude = Number(elem.value);
+        globals.animation.raw_latitude = Number(elem.value);
+    }
+}
 
 function click(ev, canvas) {
     // Set new coordinates of mouse click
-      
-    isMouseDown = true;
+    i = globals.interaction;
+
+    i.MouseDown = true;
     
-    x = ev.clientX; // x coordinate of a mouse pointer
-    y = ev.clientY; // y coordinate of a mouse pointer
+    i.x = ev.clientX; // x coordinate of a mouse pointer
+    i.y = ev.clientY; // y coordinate of a mouse pointer
      
-    x = x/canvas.width;
-    y = y/canvas.width;
+    i.x = i.x/canvas.width;
+    i.y = i.y/canvas.width;
     
 }
   
 function mouseMove(ev, canvas)
 {
     // Show change in x, y
-    mxNew = ev.clientX;
-    myNew = ev.clientY;
+    i = globals.interaction;
+    i.mxNew = ev.clientX;
+    i.myNew = ev.clientY;
       
-    mxNew = mxNew/canvas.width;
-    myNew = myNew/canvas.width;
+    i.mxNew = i.mxNew/canvas.width;
+    i.myNew = i.myNew/canvas.width;
     
-    var xdrag = mxNew-x + .00001;
-    var ydrag = y-myNew + .00001;
-    var dist = Math.sqrt(xdrag*xdrag + ydrag*ydrag);
+    var xdrag = i.mxNew-i.x + .00001;
     
-    if(Math.abs(xdrag) > Math.abs(5 * ydrag))
-        rotateAxis(0, xdrag, 0, dist);
-    else if(Math.abs(ydrag) > Math.abs(5 * xdrag))
-        rotateAxis(0, 0, -ydrag, dist);
-    else{
-        ydrag = ydrag / Math.abs(ydrag);
-        xdrag = xdrag / Math.abs(xdrag);
-       // rotateAxis(0, 1*xdrag, 1*ydrag, -dist);
-    }
-       
-    
-   // dragQuat(mxNew-x, y-myNew);
+    q = globals.quaternions['view'];
+    rotateAxis(0, 1, 0, xdrag * 10, q);
 }
 
 function toggleLock()
 {
-    if(lockToSun) {
+    if(globals.camera.lockToSun) {
         // Start off from current view
         
         // Find vector orthogonal to h and in plane containing h, heading
+        var heading = globals.camera.heading;
+        var h = globals.camera.h;
         var axis = heading.crossProduct(h);
         axis.normalize();
         // Use that vector as rotation axis 
@@ -251,14 +239,17 @@ function toggleLock()
         
         // Find angle between heading and h
         var angle = Math.acos(heading.dot(h)/(h.length()*heading.length()));
-        qTotView.setFromAxisAngle(a[0],a[1],a[2], - angle * 180 / Math.PI);
-        quatMatrix.setFromQuat(qTotView.x, qTotView.y, qTotView.z, qTotView.w);
-        
-        lockToSun = false;
+        angle = angle * 180 / Math.PI;
+        globals.quaternions['view'].total.setFromAxisAngle(a[0],a[1],a[2], -angle);
+        if(angle > 90 && angle < 270){
+            rotateAxis(1, 0, 0, 180, globals.quaternions['view']);
+        }
+        globals.camera.lockToSun = false;
     }
-    else lockToSun = true;
+    else globals.camera.lockToSun = true;
 }
 
+// TODO: Move to webserver
 function planetChooser(sel)
 {
     var  value = sel.options[sel.selectedIndex].value;
@@ -266,22 +257,27 @@ function planetChooser(sel)
 
     switch(value){
         case "Earth":
-            tilt = 23.4;
-            numDays = 365;
-            
+            globals.currentPlanet = {
+                tilt : 23.4,
+                numDays : 365,
+                radius : 200
+            }    
             pane.style.display = "none";
             break;
         case "Uranus":
-            tilt = 97.77;
-            numDays = 84.323 * 365;
-            
+            globals.currentPlanet = {
+                tilt : 97.4,
+                numDays : 84.323 * 365,
+                radius : 200
+            }            
             pane.style.display = "none";
             break;
         case "B612":
-            tilt = 0;
-            numDays = 100;
-            pRadius = 10;
-            
+            globals.currentPlanet = {
+                tilt : 0,
+                numDays : 100,
+                radius : 10
+            }            
             pane.style.display = "none";
             break;
         case "Custom":            
@@ -289,9 +285,9 @@ function planetChooser(sel)
             break;
     }
     
-    synchUI("tilt", tilt);
-    synchUI("radius", pRadius);
-    synchUI("year", numDays);
+    synchUI("tilt", globals.currentPlanet.tilt);
+    synchUI("radius", globals.currentPlanet.radius);
+    synchUI("year", globals.currentPlanet.numDays);
     
 }
 

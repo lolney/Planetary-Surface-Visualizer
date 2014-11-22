@@ -2,43 +2,17 @@
  * Contains quaternion camera control methods, lookAt function
  */
 
-function lookAt()
+function lookAt(eye, position, up)
 {
-   // Calculates camera position based on (center) position, up vectors and eye position                     
-  viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ,
+   // Calculates camera position based on (center) position, up vectors and eye position
+  var viewMatrix = new Matrix4();                    
+  viewMatrix.setLookAt(eye.elements[0], eye.elements[1], eye.elements[2],
                         position.elements[0], 
                         position.elements[1], 
                         position.elements[2],
                         up.elements[0], up.elements[1], up.elements[2]); 
+  return viewMatrix;
                                                 
-}
-
-
-function resetPitch()
-{
-    // Reset rotations of camera, objects
-    pitch = 0;
-    roll = 0;
-    yaw = 0;
-    
-    // Reset joint quaternions
-    qNewView = new Quaternion(0,0,0,1);
-    qTotView = new Quaternion(0,0,0,1);
-    
-    // Reset joint quaternions
-    qNewG = new Quaternion(0,0,0,1); // most-recent mouse drag's rotation
-    qTotG = new Quaternion(0,0,0,1);	// 'current' orientation (made from qNew)
-
-    qNew1 = new Quaternion(0,0,0,1); // most-recent mouse drag's rotation
-    qTot1 = new Quaternion(0,0,0,1);	// 'current' orientation (made from qNew)
-
-    qNew2 = new Quaternion(0,0,0,1); // most-recent mouse drag's rotation
-    qTot2 = new Quaternion(0,0,0,1);	// 'current' orientation (made from qNew)
-
-    qNew3 = new Quaternion(0,0,0,1); // most-recent mouse drag's rotation
-    qTot3 = new Quaternion(0,0,0,1);	// 'current' orientation (made from qNew)
-
-    
 }
 
 function dragQuat(xdrag, ydrag) {
@@ -50,41 +24,9 @@ function dragQuat(xdrag, ydrag) {
 // rotation stored in quaternion 'qTot' by quaternion multiply.  Note the 
 // 'draw()' function converts this current 'qTot' quaternion to a rotation 
 // matrix for drawing. 
-	var res = 5;
-	
-        console.log('xdrag,ydrag=',xdrag.toFixed(5),ydrag.toFixed(5));
-        switch(control)
-        {
-            case 0:
-                rotateAxisHelper(qNewG, qTotG, xdrag, ydrag)
-                break;
-            case 1:
-                rotateAxisHelper(qNew1, qTot1, xdrag, ydrag);
-                break;
-            case 2:
-                rotateAxisHelper(qNew2, qTot2, xdrag, ydrag);
-                break;
-            case 3:
-                rotateAxisHelper(qNew3, qTot3, xdrag, ydrag);
-                break;
-        }
-	
-	 
-	//--------------------------
-	// IMPORTANT! Why qNew*qTot instead of qTot*qNew? (Try it!)
-	// ANSWER: Because 'duality' governs ALL transformations, not just matrices. 
-	// If we multiplied in (qTot*qNew) order, we would rotate the drawing axes
-	// first by qTot, and then by qNew--we would apply mouse-dragging rotations
-	// to already-rotated drawing axes.  Instead, we wish to apply the mouse-drag
-	// rotations FIRST, before we apply rotations from all the previous dragging.
-	//------------------------
-	// IMPORTANT!  Both qTot and qNew are unit-length quaternions, but we store 
-	// them with finite precision. While the product of two (EXACTLY) unit-length
-	// quaternions will always be another unit-length quaternion, the qTmp length
-	// may drift away from 1.0 if we repeat this quaternion multiply many times.
-	// A non-unit-length quaternion won't work with our quaternion-to-matrix fcn.
-	// Matrix4.prototype.setFromQuat().
-	
+    q = globals.quaternions[global.interaction.dragMode];
+    rotateAxisHelper(q.last, q.total, xdrag, ydrag)
+		
 };
 
 function rotateAxisHelper(qNew, qTot, xdrag, ydrag)
@@ -100,12 +42,12 @@ function rotateAxisHelper(qNew, qTot, xdrag, ydrag)
 }
 
 // Rotation function for the view matrix
-function rotateAxis(x, y, z, factor)
+function rotateAxis(x, y, z, factor, q)
  {
   qTmp = new Quaternion(0, 0, 0, 1);
-  qNewView.setFromAxisAngle(x, y, z, factor*90/12);
-  qTmp.multiply(qTotView, qNewView);
+  q.last.setFromAxisAngle(x, y, z, factor);
+  qTmp.multiply(q.total, q.last);
   qTmp.normalize();						
-  qTotView.copy(qTmp);
+  q.total.copy(qTmp);
 }
 
