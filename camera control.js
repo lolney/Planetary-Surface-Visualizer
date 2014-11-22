@@ -45,7 +45,7 @@ function rotateAxisHelper(qNew, qTot, xdrag, ydrag)
 function rotateAxis(x, y, z, factor, q)
  {
   qTmp = new Quaternion(0, 0, 0, 1);
-  q.last.setFromAxisAngle(x, y, z, factor*90/12);
+  q.last.setFromAxisAngle(x, y, z, factor);
   qTmp.multiply(q.total, q.last);
   qTmp.normalize();						
   q.total.copy(qTmp);

@@ -2,7 +2,7 @@
  * Contains callbacks for buttons, sliders, etc.
  */
 
-function keydown(ev) {
+function keydown() {
 //------------------------------------------------------
 // rotateAxis uses quaternion rotation
 
@@ -15,59 +15,62 @@ function keydown(ev) {
     var west = vec2.clone([1, 0]);
     headV2 = vec2.clone([c.heading.elements[0], c.heading.elements[2]]);
     
-    var s = .4;
+    var s = .01;
 
-    switch(ev.keyCode){
-        case 87: // WW
-            a.raw_latitude += s * vec2.dot(north, headV2);
-            a.raw_longitude += s * vec2.dot(west, headV2);
-            break;
-        case 83: // S 
-            a.raw_latitude -= s * vec2.dot(north, headV2);
-            a.raw_longitude -= s * vec2.dot(west, headV2);
-            break;
-        case 65: // A 
-            a.raw_longitude -= s * vec2.dot(north, headV2);
-            a.raw_latitude += s * vec2.dot(west, headV2);
-            break;
-        case 68:// D
-            a.raw_longitude += s * vec2.dot(north, headV2);  
-            a.raw_latitude -= s * vec2.dot(west, headV2);
-            break;
-        
-        case 39: // Right arrow (adjust yaw)
-          rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
-          break;
-        case 37: // Left arrow (adjust yaw)
-          rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
-          break;
+    for(i in globals.keyCodes){
+        keycode = globals.keyCodes[i];
+        switch(keycode){
+            case 87: // W
+                a.raw_latitude += s * vec2.dot(north, headV2);
+                a.raw_longitude += s * vec2.dot(west, headV2);
+                break;
+            case 83: // S 
+                a.raw_latitude -= s * vec2.dot(north, headV2);
+                a.raw_longitude -= s * vec2.dot(west, headV2);
+                break;
+            case 65: // A 
+                a.raw_longitude -= s * vec2.dot(north, headV2);
+                a.raw_latitude += s * vec2.dot(west, headV2);
+                break;
+            case 68:// D
+                a.raw_longitude += s * vec2.dot(north, headV2);  
+                a.raw_latitude -= s * vec2.dot(west, headV2);
+                break;
             
-        case 82: // R: reset
-            g_EyeX = 0;
-            g_EyeY = 0;
-            g_EyeZ = -1;
+            case 39: // Right arrow (adjust yaw)
+              rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
+              break;
+            case 37: // Left arrow (adjust yaw)
+              rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
+              break;
+                
+            case 82: // R: reset
+                g_EyeX = 0;
+                g_EyeY = 0;
+                g_EyeZ = -1;
+                
+                break;
+                
+            case 69: // E: adjust pitch
+                rotateAxis(1, 0, 0, 1, globals.quaternions['view']);
+                break;
+            case 81: // Q: adjust pitch
+                rotateAxis(1, 0, 0, -1, globals.quaternions['view']);
+                break;    
+            case 90: // Z:  adjust roll
+                rotateAxis(0, 0, 1, 1, globals.quaternions['view']);
+                break;
+            case  88: // X:  adjust roll
+                rotateAxis(0, 0, 1, -1, globals.quaternions['view']);
+                break;
             
-            break;
-            
-        case 69: // E: adjust pitch
-            rotateAxis(1, 0, 0, 1, globals.quaternions['view']);
-            break;
-        case 81: // Q: adjust pitch
-            rotateAxis(1, 0, 0, -1, globals.quaternions['view']);
-            break;    
-        case 90: // Z:  adjust roll
-            rotateAxis(0, 0, 1, 1, globals.quaternions['view']);
-            break;
-        case  88: // X:  adjust roll
-            rotateAxis(0, 0, 1, -1, globals.quaternions['view']);
-            break;
-        
-        case 112: // F1: help
-            showConsole();
-            break;
-        default:
-            console.log(ev.keyCode); return;
-        } // Prevent the unnecessary drawing
+            case 112: // F1: help
+                showConsole();
+                break;
+            default:
+                console.log(keycode); return;
+            } // Prevent the unnecessary drawing
+    }
     
     a.latitude = wrap(a.raw_latitude);
 }
@@ -84,8 +87,12 @@ function keydown(ev) {
  */ 
 function getValue(slider, textBox, idSwitch)
 {
+
     var x = document.getElementById(textBox);
     var y = document.getElementById(slider);
+
+    if(!x.value.match(/^\d+(\.\d+)?$/)) return;
+
     if(idSwitch === 0)
     {    
         x.value = Math.pow(24, y.value);
@@ -93,10 +100,10 @@ function getValue(slider, textBox, idSwitch)
     {
         y.value = Math.log(x.value)/Math.log(24);
     }
-    
-    // to fix an odd bug in which the number didn't seem to be formatted properly:
-    var temp = Math.pow(x.value, 1); 
-    
+
+    temp = Number(x.value);
+    console.log(temp);
+
     switch(slider)
     {
         case "speedS":
@@ -108,8 +115,12 @@ function getValue(slider, textBox, idSwitch)
 
 function getValue2(slider, textBox, idSwitch)
 {
+
     var x = document.getElementById(textBox);
     var y = document.getElementById(slider);
+
+    if(!x.value.match(/^\d+(\.\d+)?$/)) return;
+
     if(idSwitch === 0)
     {    
         x.value = y.value;
@@ -117,15 +128,13 @@ function getValue2(slider, textBox, idSwitch)
     {
         y.value = x.value;
     }
-    
-    // to fix an odd bug in which the number didn't seem to be formatted properly:
-    var temp = Math.pow(y.value, 1);
+
+    temp = Number(y.value);
     
     switch(slider)
     {
         case "tiltS":
                 globals.currentPlanet.tilt = temp;
-                console.log("Caled");
             break;
         case "radiusS":
                 globals.currentPlanet.radius = temp;
@@ -151,45 +160,41 @@ function behaviorChange(sel){
        
 }
 
+function changeLatitude(elem){
+    if(elem.value.match(/^\d+(\.\d+)?$/)){
+        globals.animation.latitude = Number(elem.value);
+        globals.animation.raw_latitude = Number(elem.value);
+    }
+}
 
 function click(ev, canvas) {
     // Set new coordinates of mouse click
-      
-    isMouseDown = true;
+    i = globals.interaction;
+
+    i.MouseDown = true;
     
-    x = ev.clientX; // x coordinate of a mouse pointer
-    y = ev.clientY; // y coordinate of a mouse pointer
+    i.x = ev.clientX; // x coordinate of a mouse pointer
+    i.y = ev.clientY; // y coordinate of a mouse pointer
      
-    x = x/canvas.width;
-    y = y/canvas.width;
+    i.x = i.x/canvas.width;
+    i.y = i.y/canvas.width;
     
 }
   
 function mouseMove(ev, canvas)
 {
     // Show change in x, y
-    mxNew = ev.clientX;
-    myNew = ev.clientY;
+    i = globals.interaction;
+    i.mxNew = ev.clientX;
+    i.myNew = ev.clientY;
       
-    mxNew = mxNew/canvas.width;
-    myNew = myNew/canvas.width;
+    i.mxNew = i.mxNew/canvas.width;
+    i.myNew = i.myNew/canvas.width;
     
-    var xdrag = mxNew-x + .00001;
-    var ydrag = y-myNew + .00001;
-    var dist = Math.sqrt(xdrag*xdrag + ydrag*ydrag);
+    var xdrag = i.mxNew-i.x + .00001;
     
-    if(Math.abs(xdrag) > Math.abs(5 * ydrag))
-        rotateAxis(0, xdrag, 0, dist);
-    else if(Math.abs(ydrag) > Math.abs(5 * xdrag))
-        rotateAxis(0, 0, -ydrag, dist);
-    else{
-        ydrag = ydrag / Math.abs(ydrag);
-        xdrag = xdrag / Math.abs(xdrag);
-       // rotateAxis(0, 1*xdrag, 1*ydrag, -dist);
-    }
-       
-    
-   // dragQuat(mxNew-x, y-myNew);
+    q = globals.quaternions['view'];
+    rotateAxis(0, 1, 0, xdrag * 10, q);
 }
 
 function toggleLock()
@@ -207,8 +212,11 @@ function toggleLock()
         
         // Find angle between heading and h
         var angle = Math.acos(heading.dot(h)/(h.length()*heading.length()));
-        globals.quaternions['view'].total.setFromAxisAngle(a[0],a[1],a[2], - angle * 180 / Math.PI);
-        
+        angle = angle * 180 / Math.PI;
+        globals.quaternions['view'].total.setFromAxisAngle(a[0],a[1],a[2], -angle);
+        if(angle > 90 && angle < 270){
+            rotateAxis(1, 0, 0, 180, globals.quaternions['view']);
+        }
         globals.camera.lockToSun = false;
     }
     else globals.camera.lockToSun = true;

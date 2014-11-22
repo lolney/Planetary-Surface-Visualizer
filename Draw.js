@@ -20,6 +20,7 @@ var Globals = function(){
   this.matrices = {};
 
   this.objects = {};
+  this.keyCodes = [];
   
   this.quaternions = {
     view : {
@@ -42,7 +43,7 @@ var Globals = function(){
 
   this.animation = {
     // Animation:
-    x_s : 60,
+    x_s : 30,
     raw_latitude : 0,
     raw_longitude : 0,
     latitude : 0,
@@ -133,13 +134,14 @@ function main() {
   // Create the matrix to specify the view matrix
   globals.viewMatrix = new Matrix4();
   // Register the event handler to be called on key press
-   document.onkeydown = function(ev){ keydown(ev); };
+   document.onkeydown = function(ev){ globals.keyCodes.push(ev.keyCode); };
+   document.onkeyup = function(ev){ globals.keyCodes = []; };
    window.onresize = function(){
                         globals.canvas.width = window.innerWidth - 25;
                         globals.canvas.height = window.innerHeight;
                       }
    globals.canvas.onmousedown = function(ev){ click(ev, globals.canvas); };
-   globals.canvas.onmousemove = function(ev){ if(globals.interaction.MouseDown == true) mouseMove(ev, canvas); };
+   globals.canvas.onmousemove = function(ev){ if(globals.interaction.MouseDown == true) mouseMove(ev, globals.canvas); };
    globals.canvas.onmouseup   = function() { globals.interaction.MouseDown = false; };
         
 

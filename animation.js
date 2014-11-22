@@ -16,6 +16,7 @@ var tick = function() {
         initVertexBuffers(globals.gl);
     }
     animate();
+    keydown();
     
     // Apply the accumulated rotation to the up, heading vectors
     m = new Matrix4();
@@ -112,11 +113,12 @@ function updateInfo(seconds, phi)
     // TODO: proper timezone handling
     var d = new Date(2014, 2, 21, 0, 0, seconds);
     
-    var string = "Day: " + d.toLocaleDateString() + " " + d.toLocaleTimeString();
+    var string = d.toLocaleDateString() + " " + d.toLocaleTimeString();
     document.getElementById("p1").innerHTML = string; 
     
-    string = "Latitude: " + a.latitude.toFixed(2);
-    document.getElementById("p2").innerHTML = string;
+    if(document.getElementById("latitude") != document.activeElement){
+      document.getElementById("latitude").value = a.latitude.toFixed(2);
+    }
     
     phi -= Math.PI/2;   
     var latitudeR = a.latitude*Math.PI/180;
@@ -162,7 +164,7 @@ function updateInfo(seconds, phi)
  * @return {int}        Latitude confined to -90 < x < 90
  */ 
 function wrap(lat){
-    if(lat < 90 && lat > -90) return lat;
+    if(lat <= 90 && lat >= -90) return lat;
     if(lat > 90) lat = 90 - (lat - 90);
     if(lat < -90) lat = -90 - (lat + 90);
     return wrap(lat);
