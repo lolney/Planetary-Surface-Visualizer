@@ -52,7 +52,11 @@ var Globals = function(){
     world_heading: new Vector3([0,0,1]),
     now: 0,
     last: 0,
-    sun: new Vector3([0,1,0])
+    sun: new Vector3([0,1,0]),
+    lastLat : 0,
+    lastLong : 0,
+    fps : [],
+    seconds : 0
 
   }
 
@@ -151,7 +155,7 @@ function main() {
 	globals.gl.depthFunc(globals.gl.LESS);			 // WebGL default setting: (default)
 	globals.gl.enable(globals.gl.DEPTH_TEST);
         
-  tick();
+  animation.tick();
 }
 
 /**
@@ -160,7 +164,7 @@ function main() {
 function makeObjects(){
   globals.objects = {
     Sun : {
-      vertices : makeSphere(1,.1,.1),
+      vertices : geometry.makeSphere(1,.1,.1),
       transformations : function(model){
         a = globals.animation;
         sun = a.sun.elements;
@@ -175,7 +179,7 @@ function makeObjects(){
       primitive : globals.gl.TRIANGLE_STRIP
     },
     Ground : {
-      vertices : makeGroundGrid(0, 0),
+      vertices : geometry.makeGroundGrid(0, 0),
       transformations : function(model){
         p = globals.animation;
 
@@ -268,7 +272,7 @@ function draw(canvas, gl) {
   var nearP = .1;
   var farP = 1000;
   
-  var viewMatrix = lookAt(globals.camera.eye, globals.camera.position, globals.camera.up);                       
+  var viewMatrix = camera.lookAt(globals.camera.eye, globals.camera.position, globals.camera.up);                       
   gl.uniformMatrix4fv(globals.uniforms['view'], false, viewMatrix.elements);
   
   var projMatrix = new Matrix4();

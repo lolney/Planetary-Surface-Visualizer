@@ -7,7 +7,7 @@
 */
 function keydown() {
 //------------------------------------------------------
-// rotateAxis uses quaternion rotation
+// camera.rotateAxis uses quaternion rotation
 
     var c = globals.camera;
     var a = globals.animation;
@@ -46,10 +46,10 @@ function keydown() {
                 break;
             
             case 39: // Right arrow (adjust yaw)
-              rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
+              camera.rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
               break;
             case 37: // Left arrow (adjust yaw)
-              rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
+              camera.rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
               break;
                 
             case 82: // R: reset
@@ -60,16 +60,16 @@ function keydown() {
                 break;
                 
             case 69: // E: adjust pitch
-                rotateAxis(1, 0, 0, 1, globals.quaternions['view']);
+                camera.rotateAxis(1, 0, 0, 1, globals.quaternions['view']);
                 break;
             case 81: // Q: adjust pitch
-                rotateAxis(1, 0, 0, -1, globals.quaternions['view']);
+                camera.rotateAxis(1, 0, 0, -1, globals.quaternions['view']);
                 break;    
             case 90: // Z:  adjust roll
-                rotateAxis(0, 0, 1, 1, globals.quaternions['view']);
+                camera.rotateAxis(0, 0, 1, 1, globals.quaternions['view']);
                 break;
             case  88: // X:  adjust roll
-                rotateAxis(0, 0, 1, -1, globals.quaternions['view']);
+                camera.rotateAxis(0, 0, 1, -1, globals.quaternions['view']);
                 break;
             
             case 112: // F1: help
@@ -81,7 +81,7 @@ function keydown() {
     }
     if(dLat || dLng){
         var velocity = {lat: dLat, lng: dLng};
-        calcNewPoint(velocity);
+        sphere.calcNewPoint(velocity);
 
         globals.animation.raw_latitude += dLat;
         globals.animation.raw_longitude += dLng;
@@ -228,7 +228,7 @@ function mouseMove(ev, canvas)
     var xdrag = i.mxNew-i.x + .00001;
     
     q = globals.quaternions['view'];
-    rotateAxis(0, 1, 0, xdrag * 10, q);
+    camera.rotateAxis(0, 1, 0, xdrag * 10, q);
 }
 
 /**
@@ -253,7 +253,7 @@ function toggleLock()
         angle = angle * 180 / Math.PI;
         globals.quaternions['view'].total.setFromAxisAngle(a[0],a[1],a[2], -angle);
         if(angle > 90 && angle < 270){
-            rotateAxis(1, 0, 0, 180, globals.quaternions['view']);
+            camera.rotateAxis(1, 0, 0, 180, globals.quaternions['view']);
         }
         globals.camera.lockToSun = false;
     }
