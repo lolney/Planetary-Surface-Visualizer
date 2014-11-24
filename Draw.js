@@ -3,12 +3,11 @@
 //
 //
 //  Luke Olney's Planetary Surface viewer
-//  Feb 2014
 
 /*
  * Contains initialize and draw functions
  * 
- */
+ */ 
 
 // WebGL context
 var globals;

@@ -16,7 +16,7 @@ var VSHADER_SOURCE =
   'uniform mat4 u_ModelMatrix;\n' +
   'uniform float u_Radius;\n' +
   'varying vec4 v_Color;\n' +
-  
+   
   'void main() {\n' +
   '  vec4 start_position = u_ModelMatrix * a_Position;\n' +
   '  vec4 pos;\n' +

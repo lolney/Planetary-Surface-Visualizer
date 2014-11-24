@@ -123,7 +123,7 @@ function getValue(slider, textBox, idSwitch)
         case "speedS":
             globals.animation.x_s = temp;
             break;
-    }
+    } 
     
 }
 

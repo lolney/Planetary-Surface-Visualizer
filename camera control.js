@@ -22,7 +22,7 @@ var camera = {
                           up.elements[0], up.elements[1], up.elements[2]); 
     return viewMatrix;
                                                   
-  },
+  }, 
 
   /**
    * Called every frame: Updates position vectors based on appropriate camera settings

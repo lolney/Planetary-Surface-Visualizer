@@ -10,7 +10,7 @@ var animation = {
       var p = globals.currentPlanet;
       var a = globals.animation;
 
-      this.animate();
+      animation.animate();
       keydown();
       camera.updateCamera();
       

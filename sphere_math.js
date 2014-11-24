@@ -95,7 +95,7 @@ var sphere = {
         
         return sphere.toSpherical(p);
     },
-
+ 
     /**
      * From the given tangent velocity, find the next point along the sphere
      * The method used is to find the velocity tangent to the sphere in R3,

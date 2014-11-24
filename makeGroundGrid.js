@@ -11,7 +11,7 @@ function makeGroundGrid(XStart, YStart)
     var YNum = 100;
     gndVerts = new Float32Array(floatsPerVertex*circleTriangles*3*XNum*YNum);
     
-    var j=0;
+    var j=0; 
     // Go along x axis,
     for(var XOffset = -XNum + XStart; XOffset < XNum + XStart; XOffset+=2, j)
     {
