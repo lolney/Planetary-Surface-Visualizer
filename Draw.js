@@ -49,6 +49,7 @@ var Globals = function(){
     latitude : 0,
     longitude : 0,
     startTime: 0,
+    world_heading: new Vector3([0,0,1]),
     now: 0,
     last: 0,
     sun: new Vector3([0,1,0])
@@ -87,7 +88,9 @@ var Globals = function(){
 
 }
 
-
+/**
+ * Set up the Webgl context and initialize program
+ */ 
 function main() {
 //==============================================================================
   // Retrieve <canvas> element
@@ -151,6 +154,9 @@ function main() {
   tick();
 }
 
+/**
+ * Defines and creates objects included in the scene, adding them to the global object list
+ */ 
 function makeObjects(){
   globals.objects = {
     Sun : {
@@ -175,7 +181,7 @@ function makeObjects(){
 
         model.setIdentity(); 
         model.rotate(-90.0, 1,0,0);   
-        model.translate(-a.longitude, -a.latitude, 0);
+        model.translate(-a.raw_longitude, -a.raw_latitude, 0);
 
         return model;
       },
@@ -184,6 +190,9 @@ function makeObjects(){
   };
 }
 
+/**
+ * Load the scene objects into buffers
+ */ 
 function initVertexBuffers(gl) {
 //==============================================================================
   // How much space to store all the shapes in one array?
@@ -246,7 +255,9 @@ function initVertexBuffers(gl) {
 
 }
 
-
+/**
+ * Contains the main draw loop: define projection/view matrices and draw objects
+ */ 
 function draw(canvas, gl) {
 //==============================================================================
   
@@ -276,11 +287,15 @@ function draw(canvas, gl) {
   
 }
 
+/**
+ * Draw method for a particular object
+ */ 
 function drawModel(obj, gl){
 
   fpv = globals.params.floatsPerVertex;
   // Apply model matrices
   modelMatrix = obj.transformations(new Matrix4());
+  // Draw children here
 
   gl.uniformMatrix4fv(globals.uniforms['model'], false, modelMatrix.elements);
   gl.drawArrays(obj.primitive,

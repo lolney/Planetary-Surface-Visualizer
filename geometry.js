@@ -1,7 +1,11 @@
 /*
- * Contains methods for initializing vertices for geometric objects
+ * Contains methods for initializing vertex/color buffers for geometric objects
  */
 
+/**
+ * Single-polygon triangular plane
+ * @return {Float32Array}  The completed plane
+ */ 
  function dumbGrid(){
  	var gndVerts = new Float32Array([
     -1.0,  1.0,  0.0,  1,  1, .5,
@@ -12,15 +16,22 @@
     return gndVerts;
  }
 
-function makeGroundGrid(XStart, YStart)
+/**
+ * Creates a grid of circles
+ * @param {int} XStart     X offset - used to specify starting location in world to generate grid
+ * @param {int} YStart     Y offset
+ * @param {int} XNum       (optional) Number of circles to create (in x direction)
+ * @param {int} YNum       (optional) Number of circles to create (in y direction)
+ * @return {Float32Array}  The completed grid
+ */ 
+function makeGroundGrid(XStart, YStart, XNum, YNum)
 {
-    // Makes a grid of circles (uses gl.TRIANGLES)
     floatsPerVertex = globals.params.floatsPerVertex;
     var iColr = new Float32Array([.1, .2, .6]); // Interior color
     var oColr = new Float32Array([.5, .2, .6]); // Exterior color
     var circleTriangles = 24;
-    var XNum = 100;
-    var YNum = 100;
+    XNum = XNum || 100;
+    YNum = YNum || 100;
     gndVerts = new Float32Array(floatsPerVertex*circleTriangles*3*XNum*YNum);
     
     var j=0;
@@ -63,6 +74,7 @@ function makeGroundGrid(XStart, YStart)
     return gndVerts;
     
 }
+
 
 function makeSphere(r, g, b) {
 //==============================================================================

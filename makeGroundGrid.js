@@ -1,3 +1,5 @@
+/* Webworker program to quickly update ground grid as we move around */
+
 function makeGroundGrid(XStart, YStart)
 {
     // Makes a grid of circles (uses gl.TRIANGLES)
@@ -50,6 +52,10 @@ function makeGroundGrid(XStart, YStart)
     
 }
 
+/**
+ * Called on creation of the web worker; posts data to the main program
+ * @param {Event} ev    The recieved event, expected to contain the startX and Y coordinates for the ground grid 
+ */
 onmessage = function(ev){
   data = JSON.parse(ev.data);
   buffer = makeGroundGrid(data.longitude, data.latitude);

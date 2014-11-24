@@ -1,9 +1,12 @@
 /* 
- * Contains dynamic elements of the program
+ * Contains the main loop and dynamic elements of the program
  */
 var lastLat = 0;
 var lastLong = 0;
-oii = 0;
+
+/**
+ *  Tick function that is called every frame  
+ */
 var tick = function() {
 
     var p = globals.currentPlanet;
@@ -26,8 +29,7 @@ var tick = function() {
     animate();
     keydown();
     
-    //globals.camera.eye = new Vector3([0,1000,0]);
-    
+    // Apply camera transformations
     m = new Matrix4();
     if(globals.camera.lockToSun)
     {        
@@ -52,29 +54,23 @@ var tick = function() {
     po[1] = e[1] + h.elements[1];
     po[2] = e[2] + h.elements[2];
     
+    // Apply appropriate planetary transformations
     var u_Radius = globals.gl.getUniformLocation(globals.gl.program, 'u_Radius');
     if (!u_Radius) { 
         console.log('Failed to get u_Radius');
     } else
-      globals.gl.uniform1f(u_Radius, p.radius);
+    globals.gl.uniform1f(u_Radius, p.radius);
     
     draw(globals.canvas, globals.gl);  
     requestAnimationFrame(tick, globals.canvas);   // Request that the browser ?calls tick
        
   };
   
-var seconds = 0;
 var fps = [];
-function animate()
-{
-  a = globals.animation;
-  p = globals.currentPlanet;
-
-  a.now = Date.now();
-  var lastElapsed = a.now - a.last;
-  var totalElapsed = a.now - a.startTime;
-  a.last = a.now;
-  
+/**
+ * Displays fps to the console, averaged over 100 frames     
+ */
+function fpsCounter(){
   if(fps.length == 100){
     avg = 0;
     for(f in fps){
@@ -85,12 +81,27 @@ function animate()
     fps = [];
   }
   fps.push(1/(lastElapsed/1000));
+}
+
+var seconds = 0;
+/**
+ * Calculate the position of the sun according to the current time of year and day
+ * Latitude-idependent; latitude considerations are applied by rotation transformation
+ */
+function animate()
+{
+  a = globals.animation;
+  p = globals.currentPlanet;
+
+  a.now = Date.now();
+  var lastElapsed = a.now - a.last;
+  var totalElapsed = a.now - a.startTime;
+  a.last = a.now;
   
   // Day Zero: Northern Hemisphere Vernal Equinox
   // Start Point: Midnight on the Vernal Equinox
   
-  // Latitude considerations applied by rotation transformation
-  // Based on 0 degree latiude if z
+  // Based on 0 degree latiude
   
   var speed = 60*24*(60/a.x_s); // 1 day = x seconds
   seconds += lastElapsed*speed/1000.0;
@@ -104,7 +115,6 @@ function animate()
   a.sun.elements[0] = radius*Math.sin(phi)*Math.cos(theta-(Math.PI/2.0));
   a.sun.elements[1] = 1*radius*Math.sin(phi)*Math.sin(theta-(Math.PI/2.0));
   a.sun.elements[2] = -radius*Math.cos(phi);  
-  //sunY = 0;
     
   updateInfo(seconds, phi);
       
@@ -126,7 +136,11 @@ function updateInfo(seconds, phi)
     if(document.getElementById("latitude") != document.activeElement){
       document.getElementById("latitude").value = a.latitude.toFixed(2);
     }
+
+    string = "Longitude: " + a.longitude.toFixed(2);
+    document.getElementById("longitude").innerHTML = string; 
     
+    // Sun elevation calculation
     phi -= Math.PI/2;   
     var latitudeR = a.latitude*Math.PI/180;
     hourAngle = 2*Math.PI*seconds/(60*60*24); // hour of the day in radians
@@ -138,7 +152,7 @@ function updateInfo(seconds, phi)
     document.getElementById("p3").innerHTML = string;
     
     
-    // Sunrise and sunset calculation
+   // Sunrise and sunset calculation
    var sunCross = Math.tan(phi)*Math.tan(latitudeR); 
    
    var sunrise = Math.acos(sunCross);

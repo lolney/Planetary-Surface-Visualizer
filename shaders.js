@@ -3,7 +3,11 @@
  */
 
 
-// Vertex shader program
+/** Vertex shader program
+* Applies an inverse sterographic projection to the ground plane to make it appear curved
+* This is determined by testing the blue channel for the color expected for the ground plane;
+* this is not an ideal solution but prevents having to create additional shader programs for now
+*/
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +

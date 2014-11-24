@@ -2,39 +2,47 @@
  * Contains callbacks for buttons, sliders, etc.
  */
 
+/*
+* Loops through currently pressed keys
+*/
 function keydown() {
 //------------------------------------------------------
 // rotateAxis uses quaternion rotation
 
-// Moving with the arrow keys mimics moving around the planet
     var c = globals.camera;
     var a = globals.animation;
-    var headV2;
     
     var north = vec2.clone([0, -1]);
     var west = vec2.clone([1, 0]);
-    headV2 = vec2.clone([c.heading.elements[0], c.heading.elements[2]]);
-    
-    var s = .01;
+    var headV2 = vec2.clone([c.heading.elements[0], c.heading.elements[2]]);
+    vec2.normalize(headV2, headV2);
 
+    var s = .05;
+
+    // Loop though all keys that are currently considered active
+    // Allows multiple keys to be selected at once
+    var dLat = 0;
+    var dLng = 0;
     for(i in globals.keyCodes){
+        if(i > 5)
+            break;
         keycode = globals.keyCodes[i];
         switch(keycode){
             case 87: // W
-                a.raw_latitude += s * vec2.dot(north, headV2);
-                a.raw_longitude += s * vec2.dot(west, headV2);
+                dLat += s * vec2.dot(north, headV2);
+                dLng += s * vec2.dot(west, headV2);
                 break;
             case 83: // S 
-                a.raw_latitude -= s * vec2.dot(north, headV2);
-                a.raw_longitude -= s * vec2.dot(west, headV2);
+                dLat -= s * vec2.dot(north, headV2);
+                dLng -= s * vec2.dot(west, headV2);
                 break;
             case 65: // A 
-                a.raw_longitude -= s * vec2.dot(north, headV2);
-                a.raw_latitude += s * vec2.dot(west, headV2);
+                dLat += s * vec2.dot(west, headV2);
+                dLng -= s * vec2.dot(north, headV2);
                 break;
             case 68:// D
-                a.raw_longitude += s * vec2.dot(north, headV2);  
-                a.raw_latitude -= s * vec2.dot(west, headV2);
+                dLat -= s * vec2.dot(west, headV2);  
+                dLng += s * vec2.dot(north, headV2);
                 break;
             
             case 39: // Right arrow (adjust yaw)
@@ -68,39 +76,18 @@ function keydown() {
                 showConsole();
                 break;
             default:
-                console.log(keycode); return;
-            } // Prevent the unnecessary drawing
+                console.log(keycode); 
+        }  
     }
-    
-    a.latitude = wrap(a.raw_latitude);
-}
+    if(dLat || dLng){
+        var velocity = {lat: dLat, lng: dLng};
+        calcNewPoint(velocity);
 
-function tangetSphere(lng, lat){
-    r = globals.currentPlanet.radius;
-    u = new Vector3([-r*Math.sin(lng)*Math.sin(lat), r*Math.sin(lat)*Math.cos(lng),0]);
-    v = new Vector3([   r*Math.cos(lat)*Math.cos(lng),
-                        r*Math.sin(lng)*Math.cos(lat),
-                        r*Math.sin(lat)]);
-
-    return {lng: lng * u, lat: lat * v};
+        globals.animation.raw_latitude += dLat;
+        globals.animation.raw_longitude += dLng;
+    }
 
 }
-
-function projSphere(point){
-    l = point.length();
-    p = r * point / l;
-    lat = acos(p[2] / p.length);
-    lng = atan(p[1]/p[0]);
-    return {lat: lat, lng : lng};
-}
-
-// Project p + heading*speed onto sphere 
-    // (heading vector represents scales of u and v, so find tangent vector of sphere first)
-// Find parametric form for great circle
-// Find tangent vector at end point of great circle - this becomes new heading
-    // Project onto u, v at this point to find
-
-
 
 /**
 * Gets values from the textboxes, sliders 
@@ -140,6 +127,16 @@ function getValue(slider, textBox, idSwitch)
     
 }
 
+/**
+* Gets values from the textboxes, sliders 
+* And keep them synchronized
+* For sliders with 1:1 correspondance between range and slider value 
+
+ * @param {type} slider
+ * @param {type} textBox
+ * @param {type} idSwitch
+ * @returns {undefined} 
+ */ 
 function getValue2(slider, textBox, idSwitch)
 {
 
@@ -187,6 +184,10 @@ function behaviorChange(sel){
        
 }
 
+/**
+ * Callback for latitude textbox 
+ * @param {Object} elem     The textbox element    
+ */
 function changeLatitude(elem){
     if(elem.value.match(/^\d+(\.\d+)?$/)){
         globals.animation.latitude = Number(elem.value);
@@ -194,6 +195,9 @@ function changeLatitude(elem){
     }
 }
 
+/**
+ * Registers the initial position of the mouse     
+ */
 function click(ev, canvas) {
     // Set new coordinates of mouse click
     i = globals.interaction;
@@ -207,7 +211,10 @@ function click(ev, canvas) {
     i.y = i.y/canvas.width;
     
 }
-  
+
+/**
+ * Rotates the camera according to mouse movement    
+ */
 function mouseMove(ev, canvas)
 {
     // Show change in x, y
@@ -224,6 +231,10 @@ function mouseMove(ev, canvas)
     rotateAxis(0, 1, 0, xdrag * 10, q);
 }
 
+/**
+ * Callback for 'Lock to Sun' toggle
+ * Sets the view quaternion appropriately if toggled off
+ */
 function toggleLock()
 {
     if(globals.camera.lockToSun) {
@@ -249,7 +260,11 @@ function toggleLock()
     else globals.camera.lockToSun = true;
 }
 
-// TODO: Move to webserver
+/**
+ * Callback for planet select
+ * Changes the current planet to the one selected
+ * @param {Object} sel     The select object
+ */
 function planetChooser(sel)
 {
     var  value = sel.options[sel.selectedIndex].value;
@@ -291,6 +306,11 @@ function planetChooser(sel)
     
 }
 
+/**
+ * Keep the UI text and range elements synchronized with the global value 
+ * @param {String} name    UI element to synch      
+ * @param {Number} vel     Global value      
+ */
 function  synchUI(name, value){
     var elem = document.getElementById(name + "S");
     var elem2 = document.getElementById(name + "R");
