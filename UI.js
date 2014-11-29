@@ -226,9 +226,20 @@ function mouseMove(ev, canvas)
     i.myNew = i.myNew/canvas.width;
     
     var xdrag = i.mxNew-i.x + .00001;
-    
+    var ydrag = i.myNew-i.y + .00001;
+
     q = globals.quaternions['view'];
-    camera.rotateAxis(0, 1, 0, xdrag * 10, q);
+    if(Math.abs(xdrag) > Math.abs(ydrag)){
+        camera.rotateAxis(0, 1, 0, xdrag * 100, q);
+    }
+    else{
+        h = globals.camera.heading;
+        u = globals.camera.u;
+        rotation = h.crossProduct(u);
+        r = rotation.elements;
+        camera.rotateAxis(r[0], 0, r[2], ydrag * 100, q);
+    }
+    
 }
 
 /**

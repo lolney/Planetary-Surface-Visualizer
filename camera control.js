@@ -35,13 +35,13 @@ var camera = {
         m.setRotate(a.latitude, 1, 0, 0);
         globals.camera.heading = m.multiplyVector3(globals.animation.sun);
         
-        globals.camera.up = new Vector3(globals.camera.u.elements);
+        //globals.camera.up = new Vector3(globals.camera.u.elements);
     }
     else{
         q = globals.quaternions['view'].total;
         m.setFromQuat(q.x, q.y, q.z, q.w);  // Quaternion-->Matrix
         globals.camera.heading = m.multiplyVector3(globals.camera.h);
-        globals.camera.up = m.multiplyVector3(globals.camera.u);
+        //globals.camera.up = m.multiplyVector3(globals.camera.u);
     } 
     
     // Get the center position from eye position, heading
@@ -90,7 +90,7 @@ var camera = {
    {
     qTmp = new Quaternion(0, 0, 0, 1);
     q.last.setFromAxisAngle(x, y, z, factor);
-    qTmp.multiply(q.total, q.last);
+    qTmp.multiply(q.last, q.total);
     qTmp.normalize();						
     q.total.copy(qTmp);
   }
