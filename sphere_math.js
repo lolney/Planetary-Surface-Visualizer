@@ -103,15 +103,26 @@ var sphere = {
      * @param {Vector3} vel     2D velocity in terms of x, z       
      */
     calcNewPoint : function(vel){
-        // TODO: Heading reflects position
+        // TODO: rotations rotate heading around position axis
+        // Project heading onto tangent vectors, add, normalize
+        heading = globals.animation.world_heading;
+        tangents = sphere.tangentSphere(globals.animation.longitude, globals.animation.latitude);
+        v = tangents.v.dot(heading);
+        u = tangents.u.dot(heading);
+        heading = tangents.v.scale(v).plus(tangents.u.scale(u));
+        heading.normalize();
+
 
         position = sphere.toCartesian(globals.animation.longitude, globals.animation.latitude, globals.currentPlanet.radius);
-        tangents = sphere.tangentSphere(globals.animation.longitude, globals.animation.latitude);
+        tangent = position.crossProduct(heading);
+        tangent.normalize();
+
+        adjusted_heading = heading.scale(vel.lat).plus(tangent.scale(vel.lng));
 
         // To find direction of travel, scale tangent vectors by velocity and add, 
-        world_heading = tangents.v.scale(vel.lat).plus(tangents.u.scale(vel.lng));
+        //world_heading = tangents.v.scale(vel.lat).plus(tangents.u.scale(vel.lng));
         // Project p + world_heading onto sphere to find new point
-        p_new = position.add(world_heading);
+        p_new = position.plus(adjusted_heading);
 
         coords = sphere.projSphere(p_new);
 

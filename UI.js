@@ -21,34 +21,42 @@ function keydown() {
 
     // Loop though all keys that are currently considered active
     // Allows multiple keys to be selected at once
-    var dLat = 0;
-    var dLng = 0;
+    var dLat = lat = 0;
+    var dLng = lng = 0;
     for(i in globals.keyCodes){
         if(i > 5)
             break;
         keycode = globals.keyCodes[i];
         switch(keycode){
             case 87: // W
+                lat += s;
                 dLat += s * vec2.dot(north, headV2);
                 dLng += s * vec2.dot(west, headV2);
                 break;
             case 83: // S 
+                lat -= s;
                 dLat -= s * vec2.dot(north, headV2);
                 dLng -= s * vec2.dot(west, headV2);
                 break;
             case 65: // A 
+                lng += s;
                 dLat += s * vec2.dot(west, headV2);
                 dLng -= s * vec2.dot(north, headV2);
                 break;
             case 68:// D
+                lng -= s;
                 dLat -= s * vec2.dot(west, headV2);  
                 dLng += s * vec2.dot(north, headV2);
                 break;
             
             case 39: // Right arrow (adjust yaw)
+              position = sphere.toCartesian(globals.animation.longitude, globals.animation.latitude, globals.currentPlanet.radius);
+              globals.animation.world_heading = camera.rotateAxisMatrix(position, globals.animation.world_heading, -1);
               camera.rotateAxis(0, 1, 0, -1, globals.quaternions['view']);
               break;
             case 37: // Left arrow (adjust yaw)
+              position = sphere.toCartesian(globals.animation.longitude, globals.animation.latitude, globals.currentPlanet.radius);
+              globals.animation.world_heading = camera.rotateAxisMatrix(position, globals.animation.world_heading, 1);
               camera.rotateAxis(0, 1, 0, 1, globals.quaternions['view']);
               break;
                 
@@ -80,8 +88,9 @@ function keydown() {
         }  
     }
     if(dLat || dLng){
-        var velocity = {lat: dLat, lng: dLng};
+        var velocity = {lat: lat, lng: lng};
         sphere.calcNewPoint(velocity);
+        console.log(lat + " " + lng);
 
         globals.animation.raw_latitude += dLat;
         globals.animation.raw_longitude += dLng;
@@ -231,6 +240,8 @@ function mouseMove(ev, canvas)
     q = globals.quaternions['view'];
     if(Math.abs(xdrag) > Math.abs(ydrag)){
         camera.rotateAxis(0, 1, 0, xdrag * 100, q);
+        position = sphere.toCartesian(globals.animation.longitude, globals.animation.latitude, globals.currentPlanet.radius);
+        globals.animation.world_heading = camera.rotateAxisMatrix(position, globals.animation.world_heading, xdrag * 100);
     }
     else{
         h = globals.camera.heading;

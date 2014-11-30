@@ -93,6 +93,13 @@ var camera = {
     qTmp.multiply(q.last, q.total);
     qTmp.normalize();						
     q.total.copy(qTmp);
+  },
+
+  rotateAxisMatrix : function(axis, target, scale){
+    a = axis.elements;
+    R = new Matrix4();
+    R.setRotate(scale,a[0],a[1],a[2]);
+    return R.multiplyVector3(target);
   }
 }
 

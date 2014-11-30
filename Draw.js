@@ -48,7 +48,7 @@ var Globals = function(){
     latitude : 0,
     longitude : 0,
     startTime: 0,
-    world_heading: new Vector3([0,0,1]),
+    world_heading: new Vector3([0,1,0]),
     now: 0,
     last: 0,
     sun: new Vector3([0,1,0]),
@@ -60,7 +60,7 @@ var Globals = function(){
   }
 
   this.camera = {
-    lockToSun : true,
+    lockToSun : false,
     heading : new Vector3([0,0,1]),
     up : new Vector3([0,1,0]),
     position : new Vector3([0,0,1]),
