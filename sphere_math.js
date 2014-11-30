@@ -76,11 +76,11 @@ var sphere = {
 
         r = globals.currentPlanet.radius;
         u = new Vector3([-r*Math.sin(lng)*Math.sin(lat), r*Math.sin(lat)*Math.cos(lng), 0]);
-        v = new Vector3([   -r*Math.cos(lat)*Math.cos(lng),
+        v = new Vector3([   r*Math.cos(lat)*Math.cos(lng),
                             r*Math.sin(lng)*Math.cos(lat),
-                            r*Math.sin(lat)]);
+                            -r*Math.sin(lat)]);
 
-        return {u: u.normalize(), v: v.normalize()};
+        return {u: u.scale(1/Math.abs(u.length())), v: v.scale(1/Math.abs(v.length()))};
 
     },
 
@@ -103,21 +103,22 @@ var sphere = {
      * @param {Vector3} vel     2D velocity in terms of x, z       
      */
     calcNewPoint : function(vel){
-        // TODO: rotations rotate heading around position axis
+        // TODO: fix singularities at certain points; heading doesn't have proper sign
         // Project heading onto tangent vectors, add, normalize
-        heading = globals.animation.world_heading;
-        tangents = sphere.tangentSphere(globals.animation.longitude, globals.animation.latitude);
-        v = tangents.v.dot(heading);
-        u = tangents.u.dot(heading);
-        heading = tangents.v.scale(v).plus(tangents.u.scale(u));
-        heading.normalize();
+        a = globals.animation;
+        tangents = sphere.tangentSphere(a.longitude, a.latitude);
+
+        v = tangents.v.dot(a.world_heading);
+        u = tangents.u.dot(a.world_heading);
+        a.world_heading = tangents.v.scale(v).plus(tangents.u.scale(u));
+        a.world_heading = a.world_heading.scale(1/Math.abs(a.world_heading.length()));
 
 
-        position = sphere.toCartesian(globals.animation.longitude, globals.animation.latitude, globals.currentPlanet.radius);
-        tangent = position.crossProduct(heading);
-        tangent.normalize();
+        position = sphere.toCartesian(a.longitude, a.latitude, globals.currentPlanet.radius);
+        tangent = position.crossProduct(a.world_heading);
+        tangent = tangent.scale(1/Math.abs(tangent.length()));
 
-        adjusted_heading = heading.scale(vel.lat).plus(tangent.scale(vel.lng));
+        adjusted_heading = a.world_heading.scale(vel.lat).plus(tangent.scale(vel.lng));
 
         // To find direction of travel, scale tangent vectors by velocity and add, 
         //world_heading = tangents.v.scale(vel.lat).plus(tangents.u.scale(vel.lng));
@@ -126,8 +127,8 @@ var sphere = {
 
         coords = sphere.projSphere(p_new);
 
-        globals.animation.latitude = coords.lat;
-        globals.animation.longitude = coords.lng;
+        a.latitude = coords.lat;
+        a.longitude = coords.lng;
     }
 }
 

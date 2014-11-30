@@ -90,7 +90,6 @@ function keydown() {
     if(dLat || dLng){
         var velocity = {lat: lat, lng: lng};
         sphere.calcNewPoint(velocity);
-        console.log(lat + " " + lng);
 
         globals.animation.raw_latitude += dLat;
         globals.animation.raw_longitude += dLng;

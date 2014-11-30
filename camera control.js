@@ -34,7 +34,7 @@ var camera = {
     {        
         m.setRotate(a.latitude, 1, 0, 0);
         globals.camera.heading = m.multiplyVector3(globals.animation.sun);
-        
+        // globals.animation.world_heading = 
         //globals.camera.up = new Vector3(globals.camera.u.elements);
     }
     else{
