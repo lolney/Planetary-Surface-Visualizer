@@ -205,13 +205,11 @@ function behaviorChange(sel) {
 
 /**
  * Callback for latitude textbox
- * @param {Object} elem     The textbox element
+ * @param {} value     the value for latitude
  */
-function changeLatitude(elem) {
-  if (elem.value.match(/^\d+(\.\d+)?$/)) {
-    globals.animation.latitude = Number(elem.value);
-    globals.animation.raw_latitude = Number(elem.value);
-  }
+export function changeLatitude(value) {
+  globals.animation.latitude = Number(value);
+  globals.animation.raw_latitude = Number(value);
 }
 
 /**
@@ -271,7 +269,7 @@ export function mouseMove(ev, canvas) {
  * Callback for 'Lock to Sun' toggle
  * Sets the view quaternion appropriately if toggled off
  */
-function toggleLock() {
+export function toggleLock() {
   if (globals.camera.lockToSun) {
     // Start off from current view
 
@@ -297,59 +295,4 @@ function toggleLock() {
     }
     globals.camera.lockToSun = false;
   } else globals.camera.lockToSun = true;
-}
-
-/**
- * Callback for planet select
- * Changes the current planet to the one selected
- * @param {Object} sel     The select object
- */
-function planetChooser(sel) {
-  var value = sel.options[sel.selectedIndex].value;
-  var pane = document.getElementById("pane");
-
-  switch (value) {
-    case "Earth":
-      globals.currentPlanet = {
-        tilt: 23.4,
-        numDays: 365,
-        radius: 200
-      };
-      pane.style.display = "none";
-      break;
-    case "Uranus":
-      globals.currentPlanet = {
-        tilt: 97.4,
-        numDays: 84.323 * 365,
-        radius: 200
-      };
-      pane.style.display = "none";
-      break;
-    case "B612":
-      globals.currentPlanet = {
-        tilt: 0,
-        numDays: 100,
-        radius: 10
-      };
-      pane.style.display = "none";
-      break;
-    case "Custom":
-      pane.style.display = "inline";
-      break;
-  }
-
-  synchUI("tilt", globals.currentPlanet.tilt);
-  synchUI("radius", globals.currentPlanet.radius);
-  synchUI("year", globals.currentPlanet.numDays);
-}
-
-/**
- * Keep the UI text and range elements synchronized with the global value
- * @param {String} name    UI element to synch
- * @param {Number} vel     Global value
- */
-function synchUI(name, value) {
-  var elem = document.getElementById(name + "S");
-  var elem2 = document.getElementById(name + "R");
-  elem2.value = elem.value = value;
 }
