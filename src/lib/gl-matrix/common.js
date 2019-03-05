@@ -20,17 +20,14 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-if(!GLMAT_EPSILON) {
-    var GLMAT_EPSILON = 0.000001;
+if (!GLMAT_EPSILON) {
+  var GLMAT_EPSILON = 0.000001;
 }
 
-if(!GLMAT_ARRAY_TYPE) {
-    var GLMAT_ARRAY_TYPE = (typeof Float32Array !== 'undefined') ? Float32Array : Array;
-}
+export var GLMAT_ARRAY_TYPE =
+  typeof Float32Array !== "undefined" ? Float32Array : Array;
 
-if(!GLMAT_RANDOM) {
-    var GLMAT_RANDOM = Math.random;
-}
+export var GLMAT_RANDOM = Math.random;
 
 /**
  * @class Common utilities
@@ -44,20 +41,20 @@ var glMatrix = {};
  * @param {Type} type Array type, such as Float32Array or Array
  */
 glMatrix.setMatrixArrayType = function(type) {
-    GLMAT_ARRAY_TYPE = type;
-}
+  GLMAT_ARRAY_TYPE = type;
+};
 
-if(typeof(exports) !== 'undefined') {
-    exports.glMatrix = glMatrix;
+if (typeof exports !== "undefined") {
+  exports.glMatrix = glMatrix;
 }
 
 var degree = Math.PI / 180;
 
 /**
-* Convert Degree To Radian
-*
-* @param {Number} Angle in Degrees
-*/
-glMatrix.toRadian = function(a){
-     return a * degree;
-}
+ * Convert Degree To Radian
+ *
+ * @param {Number} Angle in Degrees
+ */
+glMatrix.toRadian = function(a) {
+  return a * degree;
+};

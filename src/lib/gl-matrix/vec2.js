@@ -19,12 +19,13 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+import { GLMAT_RANDOM, GLMAT_ARRAY_TYPE } from "./common";
 
 /**
  * @class 2 Dimensional Vector
  * @name vec2
  */
-var vec2 = {};
+export var vec2 = {};
 
 /**
  * Creates a new, empty vec2
@@ -32,10 +33,10 @@ var vec2 = {};
  * @returns {vec2} a new 2D vector
  */
 vec2.create = function() {
-    var out = new GLMAT_ARRAY_TYPE(2);
-    out[0] = 0;
-    out[1] = 0;
-    return out;
+  var out = new GLMAT_ARRAY_TYPE(2);
+  out[0] = 0;
+  out[1] = 0;
+  return out;
 };
 
 /**
@@ -45,10 +46,10 @@ vec2.create = function() {
  * @returns {vec2} a new 2D vector
  */
 vec2.clone = function(a) {
-    var out = new GLMAT_ARRAY_TYPE(2);
-    out[0] = a[0];
-    out[1] = a[1];
-    return out;
+  var out = new GLMAT_ARRAY_TYPE(2);
+  out[0] = a[0];
+  out[1] = a[1];
+  return out;
 };
 
 /**
@@ -59,10 +60,10 @@ vec2.clone = function(a) {
  * @returns {vec2} a new 2D vector
  */
 vec2.fromValues = function(x, y) {
-    var out = new GLMAT_ARRAY_TYPE(2);
-    out[0] = x;
-    out[1] = y;
-    return out;
+  var out = new GLMAT_ARRAY_TYPE(2);
+  out[0] = x;
+  out[1] = y;
+  return out;
 };
 
 /**
@@ -73,9 +74,9 @@ vec2.fromValues = function(x, y) {
  * @returns {vec2} out
  */
 vec2.copy = function(out, a) {
-    out[0] = a[0];
-    out[1] = a[1];
-    return out;
+  out[0] = a[0];
+  out[1] = a[1];
+  return out;
 };
 
 /**
@@ -87,9 +88,9 @@ vec2.copy = function(out, a) {
  * @returns {vec2} out
  */
 vec2.set = function(out, x, y) {
-    out[0] = x;
-    out[1] = y;
-    return out;
+  out[0] = x;
+  out[1] = y;
+  return out;
 };
 
 /**
@@ -101,9 +102,9 @@ vec2.set = function(out, x, y) {
  * @returns {vec2} out
  */
 vec2.add = function(out, a, b) {
-    out[0] = a[0] + b[0];
-    out[1] = a[1] + b[1];
-    return out;
+  out[0] = a[0] + b[0];
+  out[1] = a[1] + b[1];
+  return out;
 };
 
 /**
@@ -115,9 +116,9 @@ vec2.add = function(out, a, b) {
  * @returns {vec2} out
  */
 vec2.subtract = function(out, a, b) {
-    out[0] = a[0] - b[0];
-    out[1] = a[1] - b[1];
-    return out;
+  out[0] = a[0] - b[0];
+  out[1] = a[1] - b[1];
+  return out;
 };
 
 /**
@@ -135,9 +136,9 @@ vec2.sub = vec2.subtract;
  * @returns {vec2} out
  */
 vec2.multiply = function(out, a, b) {
-    out[0] = a[0] * b[0];
-    out[1] = a[1] * b[1];
-    return out;
+  out[0] = a[0] * b[0];
+  out[1] = a[1] * b[1];
+  return out;
 };
 
 /**
@@ -155,9 +156,9 @@ vec2.mul = vec2.multiply;
  * @returns {vec2} out
  */
 vec2.divide = function(out, a, b) {
-    out[0] = a[0] / b[0];
-    out[1] = a[1] / b[1];
-    return out;
+  out[0] = a[0] / b[0];
+  out[1] = a[1] / b[1];
+  return out;
 };
 
 /**
@@ -175,9 +176,9 @@ vec2.div = vec2.divide;
  * @returns {vec2} out
  */
 vec2.min = function(out, a, b) {
-    out[0] = Math.min(a[0], b[0]);
-    out[1] = Math.min(a[1], b[1]);
-    return out;
+  out[0] = Math.min(a[0], b[0]);
+  out[1] = Math.min(a[1], b[1]);
+  return out;
 };
 
 /**
@@ -189,9 +190,9 @@ vec2.min = function(out, a, b) {
  * @returns {vec2} out
  */
 vec2.max = function(out, a, b) {
-    out[0] = Math.max(a[0], b[0]);
-    out[1] = Math.max(a[1], b[1]);
-    return out;
+  out[0] = Math.max(a[0], b[0]);
+  out[1] = Math.max(a[1], b[1]);
+  return out;
 };
 
 /**
@@ -203,9 +204,9 @@ vec2.max = function(out, a, b) {
  * @returns {vec2} out
  */
 vec2.scale = function(out, a, b) {
-    out[0] = a[0] * b;
-    out[1] = a[1] * b;
-    return out;
+  out[0] = a[0] * b;
+  out[1] = a[1] * b;
+  return out;
 };
 
 /**
@@ -218,9 +219,9 @@ vec2.scale = function(out, a, b) {
  * @returns {vec2} out
  */
 vec2.scaleAndAdd = function(out, a, b, scale) {
-    out[0] = a[0] + (b[0] * scale);
-    out[1] = a[1] + (b[1] * scale);
-    return out;
+  out[0] = a[0] + b[0] * scale;
+  out[1] = a[1] + b[1] * scale;
+  return out;
 };
 
 /**
@@ -231,9 +232,9 @@ vec2.scaleAndAdd = function(out, a, b, scale) {
  * @returns {Number} distance between a and b
  */
 vec2.distance = function(a, b) {
-    var x = b[0] - a[0],
-        y = b[1] - a[1];
-    return Math.sqrt(x*x + y*y);
+  var x = b[0] - a[0],
+    y = b[1] - a[1];
+  return Math.sqrt(x * x + y * y);
 };
 
 /**
@@ -250,9 +251,9 @@ vec2.dist = vec2.distance;
  * @returns {Number} squared distance between a and b
  */
 vec2.squaredDistance = function(a, b) {
-    var x = b[0] - a[0],
-        y = b[1] - a[1];
-    return x*x + y*y;
+  var x = b[0] - a[0],
+    y = b[1] - a[1];
+  return x * x + y * y;
 };
 
 /**
@@ -267,10 +268,10 @@ vec2.sqrDist = vec2.squaredDistance;
  * @param {vec2} a vector to calculate length of
  * @returns {Number} length of a
  */
-vec2.length = function (a) {
-    var x = a[0],
-        y = a[1];
-    return Math.sqrt(x*x + y*y);
+vec2.length = function(a) {
+  var x = a[0],
+    y = a[1];
+  return Math.sqrt(x * x + y * y);
 };
 
 /**
@@ -285,10 +286,10 @@ vec2.len = vec2.length;
  * @param {vec2} a vector to calculate squared length of
  * @returns {Number} squared length of a
  */
-vec2.squaredLength = function (a) {
-    var x = a[0],
-        y = a[1];
-    return x*x + y*y;
+vec2.squaredLength = function(a) {
+  var x = a[0],
+    y = a[1];
+  return x * x + y * y;
 };
 
 /**
@@ -305,9 +306,9 @@ vec2.sqrLen = vec2.squaredLength;
  * @returns {vec2} out
  */
 vec2.negate = function(out, a) {
-    out[0] = -a[0];
-    out[1] = -a[1];
-    return out;
+  out[0] = -a[0];
+  out[1] = -a[1];
+  return out;
 };
 
 /**
@@ -331,16 +332,16 @@ vec2.inverse = function(out, a) {
  * @returns {vec2} out
  */
 vec2.normalize = function(out, a) {
-    var x = a[0],
-        y = a[1];
-    var len = x*x + y*y;
-    if (len > 0) {
-        //TODO: evaluate use of glm_invsqrt here?
-        len = 1 / Math.sqrt(len);
-        out[0] = a[0] * len;
-        out[1] = a[1] * len;
-    }
-    return out;
+  var x = a[0],
+    y = a[1];
+  var len = x * x + y * y;
+  if (len > 0) {
+    //TODO: evaluate use of glm_invsqrt here?
+    len = 1 / Math.sqrt(len);
+    out[0] = a[0] * len;
+    out[1] = a[1] * len;
+  }
+  return out;
 };
 
 /**
@@ -350,8 +351,8 @@ vec2.normalize = function(out, a) {
  * @param {vec2} b the second operand
  * @returns {Number} dot product of a and b
  */
-vec2.dot = function (a, b) {
-    return a[0] * b[0] + a[1] * b[1];
+vec2.dot = function(a, b) {
+  return a[0] * b[0] + a[1] * b[1];
 };
 
 /**
@@ -364,10 +365,10 @@ vec2.dot = function (a, b) {
  * @returns {vec3} out
  */
 vec2.cross = function(out, a, b) {
-    var z = a[0] * b[1] - a[1] * b[0];
-    out[0] = out[1] = 0;
-    out[2] = z;
-    return out;
+  var z = a[0] * b[1] - a[1] * b[0];
+  out[0] = out[1] = 0;
+  out[2] = z;
+  return out;
 };
 
 /**
@@ -379,12 +380,12 @@ vec2.cross = function(out, a, b) {
  * @param {Number} t interpolation amount between the two inputs
  * @returns {vec2} out
  */
-vec2.lerp = function (out, a, b, t) {
-    var ax = a[0],
-        ay = a[1];
-    out[0] = ax + t * (b[0] - ax);
-    out[1] = ay + t * (b[1] - ay);
-    return out;
+vec2.lerp = function(out, a, b, t) {
+  var ax = a[0],
+    ay = a[1];
+  out[0] = ax + t * (b[0] - ax);
+  out[1] = ay + t * (b[1] - ay);
+  return out;
 };
 
 /**
@@ -394,12 +395,12 @@ vec2.lerp = function (out, a, b, t) {
  * @param {Number} [scale] Length of the resulting vector. If ommitted, a unit vector will be returned
  * @returns {vec2} out
  */
-vec2.random = function (out, scale) {
-    scale = scale || 1.0;
-    var r = GLMAT_RANDOM() * 2.0 * Math.PI;
-    out[0] = Math.cos(r) * scale;
-    out[1] = Math.sin(r) * scale;
-    return out;
+vec2.random = function(out, scale) {
+  scale = scale || 1.0;
+  var r = GLMAT_RANDOM() * 2.0 * Math.PI;
+  out[0] = Math.cos(r) * scale;
+  out[1] = Math.sin(r) * scale;
+  return out;
 };
 
 /**
@@ -411,11 +412,11 @@ vec2.random = function (out, scale) {
  * @returns {vec2} out
  */
 vec2.transformMat2 = function(out, a, m) {
-    var x = a[0],
-        y = a[1];
-    out[0] = m[0] * x + m[2] * y;
-    out[1] = m[1] * x + m[3] * y;
-    return out;
+  var x = a[0],
+    y = a[1];
+  out[0] = m[0] * x + m[2] * y;
+  out[1] = m[1] * x + m[3] * y;
+  return out;
 };
 
 /**
@@ -427,11 +428,11 @@ vec2.transformMat2 = function(out, a, m) {
  * @returns {vec2} out
  */
 vec2.transformMat2d = function(out, a, m) {
-    var x = a[0],
-        y = a[1];
-    out[0] = m[0] * x + m[2] * y + m[4];
-    out[1] = m[1] * x + m[3] * y + m[5];
-    return out;
+  var x = a[0],
+    y = a[1];
+  out[0] = m[0] * x + m[2] * y + m[4];
+  out[1] = m[1] * x + m[3] * y + m[5];
+  return out;
 };
 
 /**
@@ -444,11 +445,11 @@ vec2.transformMat2d = function(out, a, m) {
  * @returns {vec2} out
  */
 vec2.transformMat3 = function(out, a, m) {
-    var x = a[0],
-        y = a[1];
-    out[0] = m[0] * x + m[3] * y + m[6];
-    out[1] = m[1] * x + m[4] * y + m[7];
-    return out;
+  var x = a[0],
+    y = a[1];
+  out[0] = m[0] * x + m[3] * y + m[6];
+  out[1] = m[1] * x + m[4] * y + m[7];
+  return out;
 };
 
 /**
@@ -462,11 +463,11 @@ vec2.transformMat3 = function(out, a, m) {
  * @returns {vec2} out
  */
 vec2.transformMat4 = function(out, a, m) {
-    var x = a[0], 
-        y = a[1];
-    out[0] = m[0] * x + m[4] * y + m[12];
-    out[1] = m[1] * x + m[5] * y + m[13];
-    return out;
+  var x = a[0],
+    y = a[1];
+  out[0] = m[0] * x + m[4] * y + m[12];
+  out[1] = m[1] * x + m[5] * y + m[13];
+  return out;
 };
 
 /**
@@ -482,32 +483,34 @@ vec2.transformMat4 = function(out, a, m) {
  * @function
  */
 vec2.forEach = (function() {
-    var vec = vec2.create();
+  var vec = vec2.create();
 
-    return function(a, stride, offset, count, fn, arg) {
-        var i, l;
-        if(!stride) {
-            stride = 2;
-        }
+  return function(a, stride, offset, count, fn, arg) {
+    var i, l;
+    if (!stride) {
+      stride = 2;
+    }
 
-        if(!offset) {
-            offset = 0;
-        }
-        
-        if(count) {
-            l = Math.min((count * stride) + offset, a.length);
-        } else {
-            l = a.length;
-        }
+    if (!offset) {
+      offset = 0;
+    }
 
-        for(i = offset; i < l; i += stride) {
-            vec[0] = a[i]; vec[1] = a[i+1];
-            fn(vec, vec, arg);
-            a[i] = vec[0]; a[i+1] = vec[1];
-        }
-        
-        return a;
-    };
+    if (count) {
+      l = Math.min(count * stride + offset, a.length);
+    } else {
+      l = a.length;
+    }
+
+    for (i = offset; i < l; i += stride) {
+      vec[0] = a[i];
+      vec[1] = a[i + 1];
+      fn(vec, vec, arg);
+      a[i] = vec[0];
+      a[i + 1] = vec[1];
+    }
+
+    return a;
+  };
 })();
 
 /**
@@ -516,10 +519,10 @@ vec2.forEach = (function() {
  * @param {vec2} vec vector to represent as a string
  * @returns {String} string representation of the vector
  */
-vec2.str = function (a) {
-    return 'vec2(' + a[0] + ', ' + a[1] + ')';
+vec2.str = function(a) {
+  return "vec2(" + a[0] + ", " + a[1] + ")";
 };
 
-if(typeof(exports) !== 'undefined') {
-    exports.vec2 = vec2;
+if (typeof exports !== "undefined") {
+  exports.vec2 = vec2;
 }
